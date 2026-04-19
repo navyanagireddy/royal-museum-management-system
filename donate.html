@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Bar</title>
+    <link rel="stylesheet" href="donate.css">
+</head>
+<body>
+    <div class="background-slideshow">
+        <img src="donate 1.jpg" alt="Museum Background 1" class="background-image"/>
+        <img src="donations2.jpg" alt="Museum Background 2" class="background-image"/>
+    </div>
+    <nav class="navbar">
+        <div class="logo">Museum</div>
+        <ul class="nav-links">
+            <li><a href="Hhome.html" >Home</a></li>
+            <li><a href="exhibits2.html" >Exhibits</a></li>
+            <li><a href="donate.html" >Donate</a></li>
+            <li><a href="events.html" >Events</a></li>
+            <li><a href="about.html" >About</a></li>
+            <li style="margin-right: 50px;"><a href="map.html" >Maps</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Support Our Mission</h1>
+        <p>Your donation helps preserve Hyderabad's royal heritage for future generations.</p>
+        <form id="donationForm">
+            <div>
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" required>
+                <div id="fullNameError" class="error-message">Please enter your full name.</div>
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+                <div id="emailError" class="error-message">Please enter a valid email address.</div>
+            </div>
+            <div>
+                <label for="donationAmount">Donation Amount</label>
+                <input type="number" id="donationAmount" placeholder="Enter amount in ₹" min="1" required>
+                <div id="amountError" class="error-message">Please enter a valid donation amount.</div>
+            </div>
+            <div>
+                <label for="message">Message (Optional)</label>
+                <textarea id="message" rows="4"></textarea>
+            </div>
+            <div class="text-center">
+                <button type="submit">Donate Now</button>
+            </div>
+        </form>
+        <div id="qrSection" style="display:none; text-align:center; margin-top:30px;">
+            <h2>Scan to Pay via UPI</h2>
+            <div id="qrCode"></div>
+            <p id="upiString" style="word-break:break-all; margin-top:10px;"></p>
+            <button id="paymentDoneBtn" style="display:none; margin-top:15px;">Payment Done</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+        // Background slideshow functionality
+        function startBackgroundSlideshow() {
+            const images = document.querySelectorAll('.background-image');
+            let currentIndex = 0;
+            images[currentIndex].classList.add('active');
+            setInterval(() => {
+                images[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % images.length;
+                images[currentIndex].classList.add('active');
+            }, 4000);
+        }
+
+        // UPI QR generation
+        const donationForm = document.getElementById('donationForm');
+        const qrSection = document.getElementById('qrSection');
+        const qrCodeDiv = document.getElementById('qrCode');
+        const upiString = document.getElementById('upiString');
+        const paymentDoneBtn = document.getElementById('paymentDoneBtn');
+        const upi_id = "6305533637@ptsbi";
+
+        donationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Reset error messages
+            document.getElementById('fullNameError').style.display = 'none';
+            document.getElementById('emailError').style.display = 'none';
+            document.getElementById('amountError').style.display = 'none';
+
+            // Get form values
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const donationAmount = document.getElementById('donationAmount').value;
+
+            // Basic validation
+            let isValid = true;
+            if (!fullName) {
+                document.getElementById('fullNameError').style.display = 'block';
+                isValid = false;
+            }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            if (!donationAmount || donationAmount <= 0) {
+                document.getElementById('amountError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Generate UPI URL
+                const upi_url = `upi://pay?pa=${upi_id}&pn=Recipient&am=${donationAmount}&cu=INR`;
+                qrSection.style.display = 'block';
+                qrCodeDiv.innerHTML = "";
+                const qr = new QRious({
+                    element: document.createElement('canvas'),
+                    value: upi_url,
+                    size: 220
+                });
+                qrCodeDiv.appendChild(qr.element);
+                upiString.textContent = `Thank you for your support, ${fullName}! 😊`;
+                paymentDoneBtn.style.display = 'inline-block';
+
+                // Store email and name for later use
+                paymentDoneBtn.dataset.email = email;
+                paymentDoneBtn.dataset.name = fullName;
+                paymentDoneBtn.dataset.amount = donationAmount;
+            }
+        });
+
+        paymentDoneBtn.addEventListener('click', function() {
+            const email = this.dataset.email;
+            const name = this.dataset.name;
+            const amount = this.dataset.amount;
+            const message = document.getElementById('message').value;
+
+            // Save donation info
+            fetch('http://localhost:3001/api/save-donation', { // <-- changed to 3001
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fullName: name,
+                    email: email,
+                    donationAmount: Number(amount),
+                    message: message
+                })
+            })
+            .then(res => res.json())
+            .then(response => {
+                if (!response.success) {
+                    alert('Failed to save donation info.');
+                }
+            });
+
+            // Send confirmation email
+            fetch('http://localhost:3001/api/payment-mail', { // <-- changed to 3001
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    name: name,
+                    amount: amount
+                })
+            })
+            .then(res => res.json())
+            .then(response => {
+                if (response.success) {
+                    alert('Payment confirmation email sent!');
+                    paymentDoneBtn.style.display = 'none';
+                } else {
+                    alert('Failed to send email. Please try again.');
+                }
+            })
+            .catch(() => {
+                alert('Failed to send email. Please try again.');
+            });
+        });
+
+        // Start slideshow on page load
+        window.onload = startBackgroundSlideshow;
+    </script>
+</body>
+</html>

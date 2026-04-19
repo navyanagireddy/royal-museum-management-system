@@ -1,0 +1,112 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Featured Exhibits</title>
+    <link rel="stylesheet" href="exhibits2.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Museum</div>
+        <ul class="nav-links">
+            <li><a href="Hhome.html" >Home</a></li>
+            <li><a href="exhibits2.html" >Exhibits</a></li>
+            <li><a href="donate.html" >Donate</a></li>
+            <li><a href="events.html" >Events</a></li>
+            <li><a href="about.html" >About</a></li>
+            <li><a href="map.html" >Maps</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Featured Exhibits</h1>
+        <div class="grid" id="exhibit-grid">
+            <div class="card" data-exhibit="throne">
+                <div class="card-header">
+                    <div>
+                        <h2>Golden Throne</h2>
+                        <p>Permanent Exhibit</p>
+                    </div>
+                </div>
+                <div class="card-image-container">
+                    <img src="throne main.jpg" alt="The Golden Throne - Image 1" class="card-image"/>
+                    <img src="throne 1.jpg" alt="The Golden Throne - Image 2" class="card-image"/>
+                    <img src="throne 2.jpg" alt="The Golden Throne - Image 3" class="card-image"/>
+                </div>
+                <p class="date">Permanent Exhibit</p>
+                <h3>The Golden Throne</h3>
+                <p class="description">
+                    A magnificent replica of the ceremonial seat used by the Nizams of Hyderabad, symbolizing their immense wealth and power. Crafted with pure gold, it is adorned with intricate designs and encrusted with precious gemstones, including emeralds, rubies, and diamonds. The throne was designed for coronations and state functions, showcasing the grandeur of the Asaf Jahi dynasty.
+                </p>
+                <p class="description">
+                    Its intricate filigree work and gemstone inlays were crafted by master artisans over several years, making it a pinnacle of Hyderabadi craftsmanship. The detailed engravings depict floral motifs and royal insignia, reflecting the cultural richness of the era. This masterpiece offers insights into the socio-political dynamics of the Nizam’s rule, standing as a testament to their wealth from trade and diplomacy.
+                </p>
+            </div>
+            <div class="card" data-exhibit="cars">
+                <div class="card-header">
+                    <div>
+                        <h2>Vintage Cars</h2>
+                        <p>Permanent Exhibit</p>
+                    </div>
+                </div>
+                <div class="card-image-container">
+                    <img src="cars main.jpg" alt="Royal Vintage Cars - Image 1" class="card-image"/>
+                    <img src="car 1.jpg" alt="Royal Vintage Cars - Image 2" class="card-image"/>
+                    <img src="car 2.jpg" alt="Royal Vintage Cars - Image 3" class="card-image"/>
+                </div>
+                <p class="date">Permanent Exhibit</p>
+                <h3>Royal Vintage Cars</h3>
+                <p class="description">
+                    The Nizam’s personal collection of luxury vehicles, a testament to their fascination with engineering and elegance. Highlights include a 1930 Rolls-Royce, known as the "Silver Ghost," customized with hand-stitched leather interiors, and a 1947 Packard, celebrated for its sleek lines and V8 engine. Each vehicle has been meticulously restored to preserve its original grandeur.
+                </p>
+                <p class="description">
+                    These cars were used in royal processions and diplomatic tours, reflecting the technological advancements of the early 20th century. The Rolls-Royce features a polished silver grille, while the Packard influenced modern automotive design. This collection offers a glimpse into the opulent lifestyle of one of India’s wealthiest dynasties, blending luxury with innovation.
+                </p>
+            </div>
+            <div class="card" data-exhibit="jewelry">
+                <div class="card-header">
+                    <div>
+                        <h2>Royal Jewelry</h2>
+                        <p>Special Exhibit</p>
+                    </div>
+                </div>
+                <div class="card-image-container">
+                    <img src="jewelry main.webp" alt="Royal Jewelry Collection - Image 1" class="card-image"/>
+                    <img src="jewelry 1.webp" alt="Royal Jewelry Collection - Image 2" class="card-image"/>
+                    <img src="jewelry 2.jpeg" alt="Royal Jewelry Collection - Image 3" class="card-image"/>
+                </div>
+                <p class="date">Special Exhibit (Until Dec 2024)</p>
+                <h3>Royal Jewelry Collection</h3>
+                <p class="description">
+                    Dazzling pieces from the Nizam’s treasury, renowned as one of the world’s richest collections. The centerpiece is the Jacob Diamond, a 184.75-carat gem acquired in 1891, known for its flawless clarity. Other highlights include a seven-stringed Basra pearl necklace and a diamond-encrusted turban ornament, showcasing unparalleled wealth.
+                </p>
+                <p class="description">
+                    The jewels reflect a blend of Persian, Indian, and European craftsmanship, with rare colored gemstones sourced globally. These pieces tell stories of royal patronage, trade routes, and cultural exchanges. The collection captivates with its beauty and historical significance, offering a rare look into Hyderabad’s legacy of power and artistry.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Slideshow functionality for each card
+        function startCardSlideshow(exhibit) {
+            const card = document.querySelector(`.card[data-exhibit="${exhibit}"]`);
+            const images = card.querySelectorAll('.card-image');
+            let currentIndex = 0;
+
+            images[currentIndex].classList.add('active');
+
+            setInterval(() => {
+                images[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % images.length;
+                images[currentIndex].classList.add('active');
+            }, 3000);
+        }
+
+        // Initialize slideshow for each card
+        document.querySelectorAll('.card').forEach(card => {
+            const exhibit = card.getAttribute('data-exhibit');
+            startCardSlideshow(exhibit);
+        });
+    </script>
+</body>
+</html>

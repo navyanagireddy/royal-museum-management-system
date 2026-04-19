@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="signin.css">
+    
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container" id="authContainer">
+        <div class="logo">
+            <h1>Museum Website</h1>
+            <p>Welcome back </p>
+        </div>
+
+        <form class="form-container" id="authForm">
+            <h2 class="form-title" id="formTitle">Sign In</h2>
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="error-message" id="usernameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" id="emailLabel" style="display: none;">Email</label>
+                <div class="input-wrapper" id="emailWrapper" style="display: none;">
+                    <input type="email" id="email" name="email" placeholder="Enter your email">
+                </div>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone" id="phoneLabel" style="display: none;">Phone Number</label>
+                <div class="input-wrapper" id="phoneWrapper" style="display: none;">
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                </div>
+                <div class="error-message" id="phoneError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="form-group confirm-password-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password">
+                </div>
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+
+            <div class="forgot-password" id="forgotPassword">
+                <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="btn-text" id="btnText">Sign In</span>
+                <div class="loading-spinner"></div>
+            </button>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <div class="switch-form">
+                <p id="switchText">Don't have an account?</p>
+                <button type="button" class="switch-btn" id="switchBtn" onclick="toggleForm()">
+                    Create Account
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let isSignupMode = false;
+        let isTransitioning = false;
+
+        function toggleForm() {
+            if (isTransitioning) return;
+            
+            isTransitioning = true;
+            const container = document.getElementById('authContainer');
+            const form = document.getElementById('authForm');
+            
+            // Start slide out animation
+            container.classList.add(isSignupMode ? 'slide-out-right' : 'slide-out-left');
+            
+            setTimeout(() => {
+                // Switch mode
+                isSignupMode = !isSignupMode;
+                
+                // Update form content
+                updateFormContent();
+                
+                // Reset form
+                form.reset();
+                clearErrors();
+                
+                // Start slide in animation
+                container.classList.remove('slide-out-left', 'slide-out-right');
+                container.classList.add(isSignupMode ? 'slide-in-left' : 'slide-in-right');
+                
+                setTimeout(() => {
+                    container.classList.remove('slide-in-left', 'slide-in-right');
+                    isTransitioning = false;
+                }, 600);
+            }, 300);
+        }
+
+        function updateFormContent() {
+            const formTitle = document.getElementById('formTitle');
+            const btnText = document.getElementById('btnText');
+            const switchText = document.getElementById('switchText');
+            const switchBtn = document.getElementById('switchBtn');
+            const forgotPassword = document.getElementById('forgotPassword');
+            const emailLabel = document.getElementById('emailLabel');
+            const emailWrapper = document.getElementById('emailWrapper');
+            const phoneLabel = document.getElementById('phoneLabel');
+            const phoneWrapper = document.getElementById('phoneWrapper');
+            const container = document.getElementById('authContainer');
+
+            if (isSignupMode) {
+                formTitle.textContent = 'Create Account';
+                btnText.textContent = 'Sign Up';
+                switchText.textContent = 'Already have an account?';
+                switchBtn.textContent = 'Sign In';
+                forgotPassword.style.display = 'none';
+                emailLabel.style.display = 'block';
+                emailWrapper.style.display = 'block';
+                phoneLabel.style.display = 'block';
+                phoneWrapper.style.display = 'block';
+                container.classList.add('signup-mode');
+                document.getElementById('email').required = true;
+                document.getElementById('phone').required = true;
+                document.getElementById('confirmPassword').required = true;
+            } else {
+                formTitle.textContent = 'Sign In';
+                btnText.textContent = 'Sign In';
+                switchText.textContent = "Don't have an account?";
+                switchBtn.textContent = 'Create Account';
+                forgotPassword.style.display = 'block';
+                emailLabel.style.display = 'none';
+                emailWrapper.style.display = 'none';
+                phoneLabel.style.display = 'none';
+                phoneWrapper.style.display = 'none';
+                container.classList.remove('signup-mode');
+                document.getElementById('email').required = false;
+                document.getElementById('phone').required = false;
+                document.getElementById('confirmPassword').required = false;
+            }
+        }
+
+        function validateForm() {
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            let isValid = true;
+
+            // Clear previous errors
+            clearErrors();
+
+            // Username validation
+            if (!username) {
+                showError('username', 'Username is required');
+                isValid = false;
+            } else if (username.length < 3) {
+                showError('username', 'Username must be at least 3 characters');
+                isValid = false;
+            }
+
+            // Email validation (only for signup)
+            if (isSignupMode) {
+                if (!email) {
+                    showError('email', 'Email is required');
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    showError('email', 'Please enter a valid email');
+                    isValid = false;
+                }
+            }
+
+            // Phone validation (only for signup)
+            if (isSignupMode) {
+                if (!phone) {
+                    showError('phone', 'Phone number is required');
+                    isValid = false;
+                } else if (!/^\+?[\d\s\-\(\)]{10,}$/.test(phone)) {
+                    showError('phone', 'Please enter a valid phone number');
+                    isValid = false;
+                }
+            }
+
+            // Password validation
+            if (!password) {
+                showError('password', 'Password is required');
+                isValid = false;
+            } else if (password.length < 6) {
+                showError('password', 'Password must be at least 6 characters');
+                isValid = false;
+            }
+
+            // Confirm password validation (only for signup)
+            if (isSignupMode) {
+                if (!confirmPassword) {
+                    showError('confirmPassword', 'Please confirm your password');
+                    isValid = false;
+                } else if (password !== confirmPassword) {
+                    showError('confirmPassword', 'Passwords do not match');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function showError(fieldName, message) {
+            const input = document.getElementById(fieldName);
+            const errorElement = document.getElementById(fieldName + 'Error');
+            
+            input.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        function clearErrors() {
+            const inputs = document.querySelectorAll('input');
+            const errors = document.querySelectorAll('.error-message');
+            
+            inputs.forEach(input => input.classList.remove('error'));
+            errors.forEach(error => {
+                error.classList.remove('show');
+                error.textContent = '';
+            });
+        }
+
+        function showForgotPassword() {
+            alert('Forgot password functionality would redirect to password reset page.');
+        }
+
+        function handleSignIn(userData) {
+            localStorage.setItem('user', JSON.stringify({
+                username: userData.username,
+                user_id: userData.user_id,
+                email: userData.email,
+                phone: userData.phone
+            }));
+            localStorage.setItem('museum_logged_in', 'true');
+        }
+
+        // Form submission
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!validateForm()) return;
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+
+            const data = {
+                username: document.getElementById('username').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                password: document.getElementById('password').value
+            };
+
+            if (isSignupMode) {
+                fetch('http://localhost:3000/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(async res => {
+                    const response = await res.json();
+                    submitBtn.classList.remove('loading');
+                    if (res.ok) {
+                        alert('Account created successfully! Please sign in.');
+                        toggleForm();
+                    } else if (response.message === 'Username already exists') {
+                        showError('username', 'Username already exists. Please choose another username.');
+                        document.getElementById('username').focus();
+                        // Optionally, clear the username field:
+                        // document.getElementById('username').value = '';
+                    } else {
+                        alert(response.message || 'Signup failed ');
+                    }
+                })
+                .catch(() => {
+                    submitBtn.classList.remove('loading');
+                    alert('Signup failed ');
+                });
+            } else {
+                fetch('http://localhost:3000/api/signin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(res => res.json())
+                .then(response => {
+                    submitBtn.classList.remove('loading');
+                    // After successful signin response
+                    if (response.message === 'Signin successful') {
+                        localStorage.setItem('museum_logged_in', 'true');
+                        localStorage.setItem('museum_username', response.username);
+                        // Store ALL user details
+                        localStorage.setItem('user', JSON.stringify({
+                          username: response.username,
+                          user_id: response.user_id, // <-- Make sure your backend returns this!
+                          email: response.email,
+                          phone: response.phone,
+                          password: response.password
+                        }));
+                        window.location.href = 'Hhome.html';
+                    } else {
+                        alert(response.message || 'Signin failed');
+                    }
+                })
+                .catch(() => {
+                    submitBtn.classList.remove('loading');
+                    alert('Signin failed');
+                });
+            }
+        });
+
+        // Real-time validation
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim()) {
+                    validateField(this);
+                }
+            });
+
+            input.addEventListener('input', function() {
+                if (this.classList.contains('error')) {
+                    this.classList.remove('error');
+                    const errorElement = document.getElementById(this.id + 'Error');
+                    errorElement.classList.remove('show');
+                }
+            });
+        });
+
+        function validateField(input) {
+            const fieldName = input.id;
+            const value = input.value.trim();
+
+            switch(fieldName) {
+                case 'username':
+                    if (value.length < 3) {
+                        showError(fieldName, 'Username must be at least 3 characters');
+                    }
+                    break;
+                case 'email':
+                    if (isSignupMode && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                        showError(fieldName, 'Please enter a valid email');
+                    }
+                    break;
+                case 'phone':
+                    if (isSignupMode && !/^\+?[\d\s\-\(\)]{10,}$/.test(value)) {
+                        showError(fieldName, 'Please enter a valid phone number');
+                    }
+                    break;
+                case 'password':
+                    if (value.length < 6) {
+                        showError(fieldName, 'Password must be at least 6 characters');
+                    }
+                    break;
+                case 'confirmPassword':
+                    const password = document.getElementById('password').value;
+                    if (isSignupMode && value !== password) {
+                        showError(fieldName, 'Passwords do not match');
+                    }
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

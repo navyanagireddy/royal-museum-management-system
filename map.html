@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Museum Map</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      background-image: url('https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .nav-links li a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .nav-links li a:hover {
+      color: #e8f0fe;
+      transform: scale(1.05);
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown select {
+      padding: 8px 12px;
+      background: #fff;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.2s;
+    }
+    .dropdown select:hover {
+      background: #e8f0fe;
+    }
+    .map-container {
+      height: 100vh;
+      width: 100%;
+      position: relative;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .map-modal-content {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border-radius: 8px;
+      width: 95%;
+      max-width: 900px;
+      height: calc(100vh - 100px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      overflow: hidden;
+    }
+    .map-modal-header {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      background: #fff;
+    }
+    .map-input-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    #locationInput {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #locationInput:focus {
+      border-color: #1a73e8;
+    }
+    #searchLocationBtn {
+      padding: 10px 16px;
+      background: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    #searchLocationBtn:hover {
+      background: #1357b0;
+    }
+    .transport-modes {
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      background: #f1f3f4;
+      border-radius: 4px;
+      justify-content: center;
+    }
+    .transport-mode {
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .transport-mode:hover {
+      background: #e8f0fe;
+    }
+    .transport-mode.active {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+    .start-button-container {
+      display: none;
+      text-align: center;
+      padding: 8px;
+    }
+    #startNavigationBtn {
+      padding: 10px 20px;
+      background: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    #startNavigationBtn:hover {
+      background: #1357b0;
+    }
+    #map {
+      width: 100%;
+      height: calc(100% - 140px);
+    }
+    #floor-map {
+      display: none;
+      width: 100%;
+      height: calc(100% - 140px);
+      object-fit: contain;
+      background: #fff;
+    }
+    .close-map {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #fff;
+      color: #333;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .close-map:hover {
+      background: #f1f3f4;
+    }
+    .geolocation-error {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      color: #d93025;
+      padding: 12px 20px;
+      border-radius: 6px;
+      text-align: center;
+      z-index: 1001;
+      display: none;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    .geolocation-error p {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .geolocation-error button {
+      background: #1a73e8;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .geolocation-error button:hover {
+      background: #1357b0;
+    }
+    .leaflet-control-attribution {
+      background: #fff !important;
+      color: #333 !important;
+      font-size: 10px;
+    }
+    .leaflet-control-attribution a {
+      color: #1a73e8 !important;
+    }
+    .leaflet-routing-container {
+      background: #fff !important;
+      color: #333 !important;
+      border-radius: 6px;
+      font-family: 'Roboto', sans-serif;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      max-width: 300px;
+    }
+    .leaflet-routing-container .leaflet-routing-alt {
+      background: #fff !important;
+      color: #333 !important;
+    }
+    @media (max-width: 600px) {
+      .map-modal-content {
+        width: 100%;
+        height: calc(100vh - 80px);
+        top: 70px;
+      }
+      #map, #floor-map {
+        height: calc(100% - 160px);
+      }
+      .map-input-container {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .transport-modes {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .transport-mode {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+      .navbar {
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .dropdown select {
+        width: 100%;
+        text-align: center;
+      }
+      .geolocation-error {
+        width: 85%;
+        padding: 10px;
+      }
+      .start-button-container {
+        padding: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="map-container">
+    <nav class="navbar">
+      <div class="logo">Museum Map</div>
+      <ul class="nav-links">
+        <li><a href="Hhome.html" >Home</a></li>
+        <li><a href="exhibits2.html" >Exhibits</a></li>
+        <li><a href="donate.html" >Donate</a></li>
+        <li><a href="events.html" >Events</a></li>
+        <li><a href="about.html" >About</a></li>
+        <li><a href="map.html" >Maps</a></li>
+        <li class="dropdown">
+          <select id="mapSelect" onchange="toggleMap()">
+            <option value="direction">Direction Map</option>
+            <option value="floor">Floor Map</option>
+          </select>
+        </li>
+      </ul>
+    </nav>
+    <div class="map-modal-content">
+      <div class="map-modal-header">
+        <div class="map-input-container">
+          <input type="text" id="locationInput" placeholder="Enter starting location (e.g., Delhi)" aria-label="Enter starting location">
+          <button id="searchLocationBtn" onclick="searchLocation()">Search</button>
+        </div>
+        <div class="transport-modes">
+          <button class="transport-mode active" data-mode="driving" onclick="selectTransportMode('driving')">Driving</button>
+          <button class="transport-mode" data-mode="walking" onclick="selectTransportMode('walking')">Walking</button>
+          <button class="transport-mode" data-mode="bicycling" onclick="selectTransportMode('bicycling')">Bicycling</button>
+        </div>
+        <div class="start-button-container" id="startButtonContainer">
+          <button id="startNavigationBtn" onclick="startNavigation()">Start</button>
+        </div>
+        <button class="close-map" onclick="closeMapModal()" aria-label="Close map">×</button>
+      </div>
+      <div id="map"></div>
+      <img id="floor-map" src="floor map.jpeg" alt="Museum Floor Map">
+      <div class="geolocation-error" id="geolocationError">
+        <p id="errorMessage">Unable to detect your location.</p>
+        <button onclick="retryGeolocation()">Retry</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  <script>
+    let map, routingControl, lastLocation, lastLocationName;
+    let currentTransportMode = 'driving';
+    const museumLocation = { lat: 17.4050, lng: 78.4750 }; // Nizam's Museum, Hyderabad
+    let isDirectionMap = true;
+
+    function initMap() {
+      map = L.map('map', { zoomControl: true }).setView([museumLocation.lat, museumLocation.lng], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(map);
+
+      const museumIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/535/535239.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+
+      L.marker([museumLocation.lat, museumLocation.lng], { icon: museumIcon })
+        .addTo(map)
+        .bindPopup("Nizam's Museum")
+        .openPopup();
+
+      L.control.scale({ metric: true, imperial: false }).addTo(map);
+      addUserLocationAndRoute();
+    }
+
+    function toggleMap() {
+      const mapSelect = document.getElementById('mapSelect').value;
+      const mapDiv = document.getElementById('map');
+      const floorMapImg = document.getElementById('floor-map');
+      const mapModalHeader = document.querySelector('.map-modal-header');
+
+      if (mapSelect === 'floor') {
+        // Show floor map, hide direction map
+        if (map) {
+          map.remove();
+          map = null;
+          routingControl = null;
+        }
+        mapDiv.style.display = 'none';
+        floorMapImg.style.display = 'block';
+        mapModalHeader.style.display = 'none'; // Hide input and transport modes
+        isDirectionMap = false;
+      } else {
+        // Show direction map, hide floor map
+        floorMapImg.style.display = 'none';
+        mapDiv.style.display = 'block';
+        mapModalHeader.style.display = 'flex';
+        if (!map) {
+          initMap();
+        }
+        isDirectionMap = true;
+      }
+    }
+
+    function selectTransportMode(mode) {
+      if (!isDirectionMap) return; // Disable transport mode changes on floor map
+      if (mode === currentTransportMode) return;
+      currentTransportMode = mode;
+      document.querySelectorAll('.transport-mode').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      if (lastLocation) {
+        updateRoute(lastLocation);
+      }
+    }
+
+    function closeMapModal() {
+      if (!isDirectionMap) {
+        // Switch back to direction map
+        document.getElementById('mapSelect').value = 'direction';
+        toggleMap();
+        return;
+      }
+      if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+      }
+      if (map) {
+        map.remove();
+        map = null;
+      }
+      document.getElementById('startButtonContainer').style.display = 'none';
+      document.getElementById('locationInput').value = '';
+      initMap();
+    }
+
+    function reverseGeocode(lat, lng, callback) {
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+        .then(response => response.json())
+        .then(data => {
+          const address = data.display_name || 'Unknown location';
+          callback(address);
+        })
+        .catch(() => {
+          callback('Unknown location');
+        });
+    }
+
+    function addUserLocationAndRoute() {
+      if (!isDirectionMap) return; // Skip geolocation on floor map
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+            reverseGeocode(userLocation.lat, userLocation.lng, (address) => {
+              document.getElementById('locationInput').value = address;
+              lastLocationName = address;
+              addUserMarker(userLocation, address);
+              lastLocation = userLocation;
+              updateRoute(userLocation);
+              showStartButton();
+            });
+          },
+          () => {
+            showGeolocationError('Please allow location access or enter a location.');
+          },
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+      } else {
+        showGeolocationError("Geolocation is not supported. Please enter a location.");
+      }
+    }
+
+    function addUserMarker(location, label) {
+      if (!isDirectionMap) return; // Skip markers on floor map
+      const userIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+      map.eachLayer(layer => {
+        if (layer instanceof L.Marker && layer !== map._museumMarker) {
+          map.removeLayer(layer);
+        }
+      });
+      const marker = L.marker([location.lat, location.lng], { icon: userIcon })
+        .addTo(map)
+        .bindPopup(label)
+        .openPopup();
+      map._museumMarker = marker;
+    }
+
+    function searchLocation() {
+      if (!isDirectionMap) return; // Disable search on floor map
+      const locationInput = document.getElementById('locationInput').value.trim();
+      if (!locationInput) {
+        showGeolocationError('Please enter a location.');
+        return;
+      }
+
+      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationInput)}&format=json&limit=1`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length === 0) {
+            showGeolocationError('Location not found. Try another.');
+            return;
+          }
+          const customLocation = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+          const address = data[0].display_name;
+          document.getElementById('locationInput').value = address;
+          lastLocationName = address;
+          addUserMarker(customLocation, address);
+          lastLocation = customLocation;
+          updateRoute(customLocation);
+          showStartButton();
+        })
+        .catch(() => {
+          showGeolocationError('Error finding location. Please try again.');
+        });
+    }
+
+    function updateRoute(startLocation) {
+      if (!isDirectionMap) return; // Skip routing on floor map
+      if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+      }
+
+      const profileMap = {
+        driving: 'driving',
+        walking: 'foot',
+        bicycling: 'bicycle'
+      };
+      const profile = profileMap[currentTransportMode] || 'driving';
+
+      routingControl = L.Routing.control({
+        waypoints: [
+          L.latLng(startLocation.lat, startLocation.lng),
+          L.latLng(museumLocation.lat, museumLocation.lng)
+        ],
+        routeWhileDragging: false,
+        showAlternatives: false,
+        lineOptions: { styles: [{ color: '#1a73e8', weight: 5 }] },
+        fitSelectedRoutes: true,
+        show: true,
+        createMarker: () => null,
+        router: L.Routing.osrmv1({
+          serviceUrl: 'https://router.project-osrm.org/route/v1',
+          profile: profile
+        })
+      }).addTo(map);
+
+      routingControl.on('routesfound', (e) => {
+        const route = e.routes[0];
+        const distance = (route.summary.totalDistance / 1000).toFixed(1);
+        const duration = Math.round(route.summary.totalTime / 60);
+        const popupContent = `Distance: ${distance} km<br>Time: ${duration} min`;
+        L.popup()
+          .setLatLng(startLocation)
+          .setContent(popupContent)
+          .openOn(map);
+      });
+
+      routingControl.on('routingerror', () => {
+        showGeolocationError('Unable to calculate route. Try a different location or mode.');
+      });
+
+      const bounds = L.latLngBounds(
+        [startLocation.lat, startLocation.lng],
+        [museumLocation.lat, museumLocation.lng]
+      );
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+    }
+
+    function showStartButton() {
+      if (!isDirectionMap) return; // Hide start button on floor map
+      document.getElementById('startButtonContainer').style.display = 'block';
+    }
+
+    function startNavigation() {
+      if (!isDirectionMap) return; // Disable navigation on floor map
+      if (!lastLocation) {
+        showGeolocationError('No location selected. Please choose a starting point.');
+        return;
+      }
+      updateRoute(lastLocation);
+      if (navigator.geolocation && (currentTransportMode === 'driving' || currentTransportMode === 'walking' || currentTransportMode === 'bicycling')) {
+        navigator.geolocation.watchPosition(
+          (position) => {
+            const newLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+            lastLocation = newLocation;
+            reverseGeocode(newLocation.lat, newLocation.lng, (address) => {
+              document.getElementById('locationInput').value = address;
+              lastLocationName = address;
+              addUserMarker(newLocation, address);
+              updateRoute(newLocation);
+            });
+          },
+          () => {
+            showGeolocationError('Location update failed.');
+          },
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+        );
+      }
+    }
+
+    function showGeolocationError(message) {
+      const errorDiv = document.getElementById('geolocationError');
+      document.getElementById('errorMessage').textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+    }
+
+    function retryGeolocation() {
+      document.getElementById('geolocationError').style.display = 'none';
+      addUserLocationAndRoute();
+    }
+
+    initMap();
+  </script>
+</body>
+</html>

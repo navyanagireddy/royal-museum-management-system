@@ -1,0 +1,248 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Bar</title>
+    <link rel="stylesheet" href="events.css">
+
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">Museum</div>
+        <ul class="nav-links">
+            <li><a href="Hhome.html" >Home</a></li>
+            <li><a href="exhibits2.html" >Exhibits</a></li>
+            <li><a href="donate.html" >Donate</a></li>
+            <li><a href="events.html" >Events</a></li>
+            <li><a href="about.html" >About</a></li>
+            <li><a href="map.html" >Maps</a></li>
+        </ul>
+    </nav>
+    <div class="container" >
+        <div id="hello-user" style="font-size:1.2em; font-weight:bold; margin-top: 1em;" >
+            
+        </div>
+        <p>Step into the Past. Explore the Future. Experience the Magic!</p>
+        <p>Lights, Legends & Legacy – A Weekend You’ll Never Forget!</p>
+        <div class="heading">
+            <h1>Upcoming Events</h1>
+        </div>
+        <div class="grid" >
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Nizam's Museum</h2>
+                        <p>Heritage Walk</p>
+                    </div>
+                </div>
+                <img alt="Royal Heritage Walk" src="walk.jpg"/>
+                <p class="date">October 15, 2024 | 10:00 AM</p>
+                <h3>Royal Heritage Walk</h3>
+                <p class="description">
+                    Join our expert guides for a special tour focusing on the Nizam's architectural legacy.
+                </p>
+                <button>Register Now</button>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Children's Workshop</h2>
+                        <p>Children's Workshop</p>
+                    </div>
+                </div>
+                <img alt="Children's History Workshop" src="children workshop.jpeg"/>
+                <p class="date">October 20, 2024 | 2:00 PM</p>
+                <h3>Children's History Workshop</h3>
+                <p class="description">
+                    Interactive session for kids aged 8-12 to learn about Hyderabad's royal past through fun activities.
+                </p>
+                <button>Register Now</button>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Special Lecture</h2>
+                        <p>Special Lecture</p>
+                    </div>
+                </div>
+                <img alt="The Last Nizam: Special Lecture" src="special lecture.jpeg"/>
+                <p class="date">November 5, 2024 | 6:00 PM</p>
+                <h3>The Last Nizam: Special Lecture</h3>
+                <p class="description">
+                    Noted historian Dr. Priya Kumar discusses the life and times of Mir Osman Ali Khan.
+                </p>
+                <button>Register Now</button>
+            </div>
+        </div>
+    </div>
+    <div id="event-popup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center;">
+      <div class="container event-popup-box" style="max-height:80vh; overflow-y:auto;">
+        <div id="event-popup-message"></div>
+        <div id="event-popup-actions" style="margin-top:1.5em;"></div>
+        <button onclick="closeEventPopup()" class="close-btn" style="width:auto; margin-top:1em;">Close</button>
+      </div>
+    </div>
+
+    <script>
+    const helloUserDiv = document.getElementById('hello-user');
+    const username = localStorage.getItem('museum_username');
+    if (localStorage.getItem('museum_logged_in') === 'true' && username) {
+        helloUserDiv.textContent = `Hello, ${username}!`;
+    } else {
+        helloUserDiv.textContent = '';
+    }
+
+    function showEventPopup(message, actionsHtml = '') {
+        document.getElementById('event-popup-message').innerHTML = message;
+        document.getElementById('event-popup-actions').innerHTML = actionsHtml;
+        document.getElementById('event-popup').style.display = 'flex';
+    }
+    function closeEventPopup() {
+        document.getElementById('event-popup').style.display = 'none';
+    }
+
+    // Attach handler to all Register Now buttons
+    document.querySelectorAll('.card button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const loggedIn = localStorage.getItem('museum_logged_in') === 'true';
+            const username = localStorage.getItem('museum_username') || 'User';
+            // Get event name from the card
+            const card = btn.closest('.card');
+            const eventName = card.querySelector('h3') ? card.querySelector('h3').innerText : 'Event';
+
+            if (!loggedIn) {
+                showEventPopup(
+                    "You need to sign in or sign up to register for this event.",
+                    `<button class="close-btn" onclick="window.location.href='signin.html'">Sign In</button>
+                     <button class="close-btn" onclick="window.location.href='signin.html'; localStorage.setItem('signup_mode','true');">Sign Up</button>`
+                );
+            } else {
+                // Only person name and age for each person
+                let personCount = 1;
+                function personFields(idx) {
+                    return `
+                        <div class="event-register-person" id="person-box-${idx}">
+                            <label>Person Name:</label>
+                            <input type="text" name="personName" required placeholder="Person Name" />
+                            <br>
+                            <label style="margin-top:0.5em;">Age:</label>
+                            <input type="number" name="age" required min="1" max="120" placeholder="Age" />
+                        </div>
+                    `;
+                }
+                let formHtml = `
+                    <form id="event-register-form" class="event-register-form">
+                        <div class="event-register-person">
+                            <label>Email:</label>
+                            <input type="email" id="group-email" name="groupEmail" required placeholder="Email" />
+                        </div>
+                        <div class="event-register-person">
+                            <label>Phone Number:</label>
+                            <input type="tel" id="group-phone" name="groupPhone" required placeholder="Phone Number"  />
+                        </div>                        
+                        <p style="font-size:1.9em; color:orange;">You can register up to 10 persons in a group.</p>
+                        <div id="persons-container">
+                            ${personFields(1)}
+                        </div>
+                        <button type="button" id="add-person-btn">Add Another Person</button>
+                        <div style="margin-top:1em;">
+                            <button type="submit" id="submit-registration-btn">Submit Registration</button>
+                        </div>
+                    </form>
+                `;
+                showEventPopup(`<b>Register for <span style="color:#2d7dd2">${eventName}</span></b>`, formHtml);
+
+                setTimeout(() => {
+                    const personsContainer = document.getElementById('persons-container');
+                    const addPersonBtn = document.getElementById('add-person-btn');
+                    const maxPersons = 10;
+                    let removePersonBtn;
+
+                    // Add the Remove Person button after Add Another Person button
+                    addPersonBtn.insertAdjacentHTML('afterend', `
+                        <button type="button" id="remove-person-btn" style="display:none; margin-left:10px;">Remove Person</button>
+                    `);
+                    removePersonBtn = document.getElementById('remove-person-btn');
+
+                    addPersonBtn.onclick = () => {
+                        if (personCount < maxPersons) {
+                            personCount++;
+                            personsContainer.insertAdjacentHTML('beforeend', personFields(personCount));
+                            if (personCount > 1) removePersonBtn.style.display = '';
+                            if (personCount === maxPersons) addPersonBtn.style.display = 'none'; // Hide after 10th person
+
+                            // Auto-scroll to the bottom of the popup after adding a person
+                            const popupBox = document.querySelector('.event-popup-box');
+                            if (popupBox) {
+                                popupBox.scrollTop = popupBox.scrollHeight;
+                            }
+                        }
+                    };
+
+                    removePersonBtn.onclick = () => {
+                        if (personCount > 1) {
+                            const lastBox = document.getElementById(`person-box-${personCount}`);
+                            if (lastBox) lastBox.remove();
+                            personCount--;
+                            addPersonBtn.style.display = ''; // Show again if less than 10
+                            if (personCount === 1) removePersonBtn.style.display = 'none';
+                        }
+                    };
+
+                    document.getElementById('event-register-form').onsubmit = function(e) {
+                        e.preventDefault();
+                        const groupEmail = document.getElementById('group-email').value.trim();
+                        const groupPhone = document.getElementById('group-phone').value.trim();
+                        const personBoxes = personsContainer.querySelectorAll('.event-register-person');
+                        const persons = [];
+                        let valid = !!groupEmail && !!groupPhone;
+                        personBoxes.forEach(box => {
+                            const personName = box.querySelector('input[name="personName"]').value.trim();
+                            const age = box.querySelector('input[name="age"]').value.trim();
+                            if (!personName || !age) valid = false;
+                            persons.push({ personName, age });
+                        });
+                        if (!valid) {
+                            alert('Please fill all fields for all persons and group info.');
+                            return;
+                        }
+                        fetch('http://localhost:3003/api/register-event', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, eventName, groupEmail, groupPhone, persons })
+                        })
+                        .then(res => res.json())
+                        .then(response => {
+                            if (response.success) {
+                                let ticketMsg;
+                                if (persons.length > 1) {
+                                    ticketMsg = `<b>Your Group Ticket Token:</b> <span style="word-break:break-all;">${response.ticket_token}</span>`;
+                                } else {
+                                    ticketMsg = `<b>Your Ticket Token:</b> <span style="word-break:break-all;">${response.ticket_token}</span>`;
+                                }
+                                showEventPopup(
+                                    `<b>Thank you,</b> \n <br>Your group is registered for <b>${eventName}</b>.<br>${ticketMsg}` +
+                                    `<br><br><br><span style="color:green;">Mail is sent to <b>${groupEmail}</b></span>`
+                                );
+                            } else {
+                                showEventPopup('Registration failed. Please try again later.');
+                            }
+                        })
+                        .catch(() => {
+                            showEventPopup('Registration failed. Please try again later.');
+                        });
+                    };
+                }, 100);
+            }
+        });
+    });
+
+    // Optional: On signin.html, after successful signin, set localStorage.setItem('museum_username', username);
+    console.log('museum_username:', localStorage.getItem('museum_username'));
+
+    // After popup is shown, add listeners for person 2 if added
+    addRepeatListeners(2);
+    </script>
+</body>
+</html>

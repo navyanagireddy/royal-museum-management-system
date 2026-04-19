@@ -1,0 +1,213 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Nizam's Museum</title>
+  <link rel="stylesheet" href="about.css">
+</head>
+<body>
+  <div class="background-container">
+    <img alt="Background Image 1" class="background-image" id="bg1" src="bg1.jpg" style="opacity: 1;" />
+    <img alt="Background Image 2" class="background-image" id="bg2" src="bg2.jpeg" style="opacity: 0;" />
+  </div>
+  <div class="radial-buttons">
+    <div class="radial-button active" onclick="showImage(0)"></div>
+    <div class="radial-button" onclick="showImage(1)"></div>
+  </div>
+  <div class="language-dropdown">
+    <select id="languageSelect" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="te">Telugu</option>
+      <option value="ta">Tamil</option>
+      <option value="hi">Hindi</option>
+    </select>
+  </div>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Museum</div>
+    <ul class="nav-links">
+        <li><a href="Hhome.html">Home</a></li>
+        <li><a href="exhibits2.html">Exhibits</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="about.html">About</a></li>
+        <li style="margin-right: 80px;"><a href="map.html" >Maps</a></li>
+      </ul>
+  </nav>
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Our Story Section -->
+    <section class="section">
+      <h2 id="ourStory">Our Story</h2>
+      <div>
+        <h3 id="preservingLegacy">Preserving Hyderabad's Royal Legacy</h3>
+        <p id="storyParagraph1">
+          The Nizam's Museum was established in 2000 with a noble mission to showcase the rich cultural heritage of the Asaf Jahi dynasty, which ruled Hyderabad for over two centuries. Located in the heart of the city, this institution stands as a testament to the opulence and grandeur of a bygone era. The museum not only preserves artifacts but also narrates the story of Hyderabad’s transformation from a princely state to a modern metropolis, offering visitors a glimpse into its storied past.
+        </p>
+        <p id="storyParagraph2">
+          Our collection includes rare artifacts from the era of the Nizams, with a special focus on the VII Nizam, Mir Osman Ali Khan, who was once listed among the world's wealthiest individuals. These treasures range from intricately designed jewelry and ornate furniture to personal belongings that reflect the lavish lifestyle of the royal family. Visitors can explore items such as the famous diamond-studded gold throne and handwritten manuscripts, each piece telling a unique story of craftsmanship and history.
+        </p>
+        <p id="storyParagraph3">
+          The museum is housed in the historic Purani Haveli, a magnificent palace that served as the official residence of the Nizams during their reign. Built in the 18th century, this architectural marvel features sprawling courtyards, elegant arches, and detailed frescoes that highlight the Indo-European influences of the time. Today, it serves as a cultural hub, attracting historians, tourists, and locals alike who seek to connect with Hyderabad’s royal legacy.
+        </p>
+        <img alt="Nizam's Museum Building" src="museum_front.jpg" width="auto" height="400px"/>
+      </div>
+    </section>
+    <!-- Our History Section -->
+    <section class="section">
+      <h2 id="ourHistory">Our History</h2>
+      <div>
+        <div class="history-item">
+          <div class="year">1591</div>
+          <div>
+            <h3 id="historyEvent1">Hyderabad Founded</h3>
+            <p id="historyDetail1">
+              Mohammed Quli Qutb Shah, the fifth ruler of the Qutb Shahi dynasty, established Hyderabad near the iconic Charminar in 1591. Envisioning a city that would rival the grandeur of Persian capitals, he laid its foundation on the banks of the Musi River. This marked the beginning of Hyderabad’s journey as a cultural and economic center, blending Islamic architecture with local traditions, a legacy that continues to define the city today.
+            </p>
+          </div>
+        </div>
+        <div class="history-item">
+          <div class="year">1724</div>
+          <div>
+            <h3 id="historyEvent2">Asaf Jahi Dynasty Begins</h3>
+            <p id="historyDetail2">
+              The Asaf Jahi dynasty was founded in 1724 by Nizam-ul-Mulk Asaf Jah I, a powerful Mughal governor who declared independence after the decline of the Mughal Empire. His rule ushered in an era of prosperity and autonomy for Hyderabad, establishing it as one of India’s most influential princely states. Under the Nizams, the region saw advancements in administration, education, and infrastructure, laying the groundwork for its modern identity.
+            </p>
+          </div>
+        </div>
+        <div class="history-item">
+          <div class="year">2000</div>
+          <div>
+            <h3 id="historyEvent3">Museum Inaugurated</h3>
+            <p id="historyDetail3">
+              The Nizam's Museum was officially opened to the public in 2000 within the walls of Purani Haveli, a move aimed at preserving and sharing the rich history of the Nizams. This initiative was driven by a collaboration between historians, the government, and the royal descendants to ensure that the legacy of the Asaf Jahi dynasty remained accessible. Since its inception, the museum has welcomed countless visitors, offering educational programs, guided tours, and exhibitions that celebrate Hyderabad’s royal past.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    let currentImageIndex = 0;
+    const images = document.querySelectorAll('.background-image');
+    const buttons = document.querySelectorAll('.radial-button');
+
+    function showImage(index) {
+      images[currentImageIndex].style.opacity = 0;
+      buttons[currentImageIndex].classList.remove('active');
+      currentImageIndex = index;
+      images[currentImageIndex].style.opacity = 1;
+      buttons[currentImageIndex].classList.add('active');
+    }
+
+    function nextImage() {
+      const nextIndex = (currentImageIndex + 1) % images.length;
+      showImage(nextIndex);
+    }
+
+    setInterval(nextImage, 2000);
+
+    const translations = {
+      en: {
+        navHome: "Home",
+        navExhibits: "Exhibits",
+        navDonate: "Donate",
+        navEvents: "Events",
+        navAbout: "About",
+        ourStory: "Our Story",
+        preservingLegacy: "Preserving Hyderabad's Royal Legacy",
+        storyParagraph1: "The Nizam's Museum was established in 2000 with a noble mission to showcase the rich cultural heritage of the Asaf Jahi dynasty, which ruled Hyderabad for over two centuries. Located in the heart of the city, this institution stands as a testament to the opulence and grandeur of a bygone era. The museum not only preserves artifacts but also narrates the story of Hyderabad’s transformation from a princely state to a modern metropolis, offering visitors a glimpse into its storied past.",
+        storyParagraph2: "Our collection includes rare artifacts from the era of the Nizams, with a special focus on the VII Nizam, Mir Osman Ali Khan, who was once listed among the world's wealthiest individuals. These treasures range from intricately designed jewelry and ornate furniture to personal belongings that reflect the lavish lifestyle of the royal family. Visitors can explore items such as the famous diamond-studded gold throne and handwritten manuscripts, each piece telling a unique story of craftsmanship and history.",
+        storyParagraph3: "The museum is housed in the historic Purani Haveli, a magnificent palace that served as the official residence of the Nizams during their reign. Built in the 18th century, this architectural marvel features sprawling courtyards, elegant arches, and detailed frescoes that highlight the Indo-European influences of the time. Today, it serves as a cultural hub, attracting historians, tourists, and locals alike who seek to connect with Hyderabad’s royal legacy.",
+        ourHistory: "Our History",
+        historyEvent1: "Hyderabad Founded",
+        historyDetail1: "Mohammed Quli Qutb Shah, the fifth ruler of the Qutb Shahi dynasty, established Hyderabad near the iconic Charminar in 1591. Envisioning a city that would rival the grandeur of Persian capitals, he laid its foundation on the banks of the Musi River. This marked the beginning of Hyderabad’s journey as a cultural and economic center, blending Islamic architecture with local traditions, a legacy that continues to define the city today.",
+        historyEvent2: "Asaf Jahi Dynasty Begins",
+        historyDetail2: "The Asaf Jahi dynasty was founded in 1724 by Nizam-ul-Mulk Asaf Jah I, a powerful Mughal governor who declared independence after the decline of the Mughal Empire. His rule ushered in an era of prosperity and autonomy for Hyderabad, establishing it as one of India’s most influential princely states. Under the Nizams, the region saw advancements in administration, education, and infrastructure, laying the groundwork for its modern identity.",
+        historyEvent3: "Museum Inaugurated",
+        historyDetail3: "The Nizam's Museum was officially opened to the public in 2000 within the walls of Purani Haveli, a move aimed at preserving and sharing the rich history of the Nizams. This initiative was driven by a collaboration between historians, the government, and the royal descendants to ensure that the legacy of the Asaf Jahi dynasty remained accessible. Since its inception, the museum has welcomed countless visitors, offering educational programs, guided tours, and exhibitions that celebrate Hyderabad’s royal past."
+      },
+      te: {
+        navHome: "హోమ్",
+        navExhibits: "ప్రదర్శనలు",
+        navDonate: "దానం చేయండి",
+        navEvents: "ఈవెంట్స్",
+        navAbout: "గురించి",
+        ourStory: "మా కథ",
+        preservingLegacy: "హైదరాబాద్ యొక్క రాజ కుటుంబ వారసత్వాన్ని కాపాడటం",
+        storyParagraph1: "నిజాం మ్యూజియం 2000 లో ఒక గొప్ప లక్ష్యంతో స్థాపించబడింది, ఇది 200 సంవత్సరాల పాటు హైదరాబాద్ ను పాలించిన అసఫ్ జాహి వంశం యొక్క సాంస్కృతిక వారసత్వాన్ని ప్రదర్శించడానికి. నగరం హృదయంలో ఉన్న ఈ సంస్థ, గత యుగం యొక్క వైభవం మరియు గొప్పతనానికి సాక్ష్యంగా నిలుస్తుంది. ఈ మ్యూజియం కేవలం వస్తువులను సంరక్షించడమే కాకుండా, హైదరాబాద్ ఒక రాజరిక రాష్ట్రం నుండి ఆధునిక నగరంగా మారిన కథను కూడా వివరిస్తుంది, సందర్శకులకు దాని చరిత్రాత్మక గతాన్ని చూపిస్తుంది.",
+        storyParagraph2: "మా సేకరణలో నిజాంల కాలం నుండి అరుదైన వస్తువులు ఉన్నాయి, ముఖ్యంగా VII నిజాం, మిర్ ఉస్మాన్ అలీ ఖాన్, ఒకప్పుడు ప్రపంచంలోని అత్యంత ధనవంతులలో ఒకరుగా ఉన్నాడు. ఈ సంపదలో సున్నితంగా రూపొందించిన ఆభరణాలు, అలంకరించిన ఫర్నిచర్ మరియు రాజ కుటుంబం యొక్క విలాసవంతమైన జీవనశైలిని ప్రతిబింబించే వ్యక్తిగత వస్తువులు ఉన్నాయి. సందర్శకులు ప్రసిద్ధ డైమండ్-స్టడెడ్ గోల్డ్ సింహాసనం మరియు చేతితో వ్రాసిన పాండులిపులను చూడవచ్చు, ప్రతి వస్తువు కళాత్మకత మరియు చరిత్ర యొక్క ప్రత్యేక కథను చెబుతుంది.",
+        storyParagraph3: "మ్యూజియం చారిత్రాత్మక పురాణి హవెలిలో ఉంది, ఇది నిజాంల పాలనలో వారి అధికారిక నివాసంగా పనిచేసిన ఒక గొప్ప రాజభవనం. 18వ శతాబ్దంలో నిర్మించబడిన ఈ వాస్తుశిల్ప అద్భుతం విశాలమైన ఆంగణాలు, సొగసైన ఆర్క్‌లు మరియు వివరణాత్మక ఫ్రెస్కోలను కలిగి ఉంది, ఇవి ఆ కాలంలోని ఇండో-యూరోపియన్ ప్రభావాలను హైలైట్ చేస్తాయి. ఈ రోజు, ఇది ఒక సాంస్కృతిక కేంద్రంగా పనిచేస్తుంది, చరిత్రకారులు, పర్యాటకులు మరియు స్థానికులను ఆకర్షిస్తుంది, వారు హైదరాబాద్ యొక్క రాజ వారసత్వంతో సంబంధం కోరుకుంటారు.",
+        ourHistory: "మా చరిత్ర",
+        historyEvent1: "హైదరాబాద్ స్థాపించబడింది",
+        historyDetail1: "మొహమ్మద్ కులీ కుతుబ్ షా, కుతుబ్ షాహీ వంశం యొక్క ఐదవ పాలకుడు, 1591లో చార్మినార్ సమీపంలో హైదరాబాద్ ను స్థాపించారు. పర్షియన్ రాజధానుల గొప్పతనాన్ని సరిపోలే నగరాన్ని ఊహించి, అతను మూసీ నది తీరంలో దాని పునాదిని వేశాడు. ఇది హైదరాబాద్ యొక్క సాంస్కృతిక మరియు ఆర్థిక కేంద్రంగా ప్రయాణం ప్రారంభించిన సందర్భంగా గుర్తించబడింది, ఇస్లామిక్ వాస్తుశిల్పాన్ని స్థానిక సంప్రదాయాలతో మిళితం చేస్తూ, ఈ రోజు నగరాన్ని నిర్వచించే వారసత్వం కొనసాగుతుంది.",
+        historyEvent2: "అసఫ్ జాహి వంశం ప్రారంభమవుతుంది",
+        historyDetail2: "అసఫ్ జాహి వంశం 1724లో నిజాం-ఉల్-ముల్క్ అసఫ్ జా I చే స్థాపించబడింది, అతను మొగల్ సామ్రాజ్యం క్షీణించిన తర్వాత స్వాతంత్ర్యం ప్రకటించిన శక్తివంతమైన మొగల్ గవర్నర్. అతని పాలన హైదరాబాద్ కు సంపన్నత మరియు స్వయం ప్రతిపత్తి యుగాన్ని తెచ్చిపెట్టింది, దానిని భారతదేశంలోని అత్యంత ప్రభావవంతమైన రాజరిక రాష్ట్రాలలో ఒకటిగా స్థాపించింది. నిజాంల ఆధ్వర్యంలో, ఈ ప్రాంతం పరిపాలన, విద్య మరియు మౌలిక సదుపాయాలలో పురోగతిని చూసింది, దాని ఆధునిక గుర్తింపుకు పునాది వేసింది.",
+        historyEvent3: "మ్యూజియం ప్రారంభించబడింది",
+        historyDetail3: "నిజాం మ్యూజియం 2000లో పురాణి హవెలి గోడలలో అధికారికంగా ప్రజలకు తెరవబడింది, నిజాంల గొప్ప చరిత్రను సంరక్షించడం మరియు పంచడం లక్ష్యంగా ఈ చర్య తీసుకోబడింది. ఈ చొరవ చరిత్రకారులు, ప్రభుత్వం మరియు రాజ వంశ వారసుల మధ్య సహకారంతో నడిచింది, అసఫ్ జాహి వంశం యొక్క వారసత్వం అందుబాటులో ఉండేలా చూసింది. దాని స్థాపన నుండి, మ్యూజియం అసంఖ్యాక సందర్శకులను స్వాగతించింది, హైదరాబాద్ యొక్క రాజ గతాన్ని జరుపుకునే విద్యా కార్యక్రమాలు, గైడెడ్ టూర్‌లు మరియు ప్రదర్శనలను అందిస్తోంది."
+      },
+      ta: {
+        navHome: "முகப்பு",
+        navExhibits: "காட்சிகள்",
+        navDonate: "நன்கொடை",
+        navEvents: "நிகழ்வுகள்",
+        navAbout: "பற்றி",
+        ourStory: "எங்கள் கதை",
+        preservingLegacy: "ஹைதராபாத்தின் அரச மரபை பாதுகாக்கிறது",
+        storyParagraph1: "நிசாம் அருங்காட்சியகம் 2000 ஆம் ஆண்டு ஒரு உயர்ந்த பணியுடன் நிறுவப்பட்டது, இது 200 ஆண்டுகளுக்கும் மேலாக ஹைதராபாத்தை ஆட்சி செய்த அசாப் ஜாஹி வம்சத்தின் பண்பாட்டு மரபை காட்சிப்படுத்துகிறது. நகரத்தின் இதயத்தில் அமைந்துள்ள இந்த நிறுவனம், கடந்த காலத்தின் செல்வச் செழிப்பு மற்றும் பெருமைக்கு சாட்சியாக நிற்கிறது. இந்த அருங்காட்சியகம் பொருட்களை பாதுகாப்பது மட்டுமல்லாமல், ஹைதராபாத் ஒரு அரசாங்க ராஜ்யத்திலிருந்து நவீன நகரமாக மாறிய கதையையும் விவரிக்கிறது, பார்வையாளர்களுக்கு அதன் வரலாற்று கடந்த காலத்தை ஒரு பார்வையை வழங்குகிறது.",
+        storyParagraph2: "எங்கள் சேகரிப்பில் நிசாம்களின் காலத்திலிருந்து அரிய பொருட்கள் உள்ளன, குறிப்பாக VII நிசாம், மிர் உஸ்மான் அலி கான், ஒரு காலத்தில் உலகின் செல்வந்தர்களில் ஒருவராக பட்டியலிடப்பட்டவர். இந்த புதையல்களில் நுணுக்கமாக வடிவமைக்கப்பட்ட நகைகள், அலங்கரிக்கப்பட்ட தளபாடங்கள் மற்றும் அரச குடும்பத்தின் ஆடம்பரமான வாழ்க்கை முறையை பிரதிபலிக்கும் தனிப்பட்ட பொருட்கள் அடங்கும். பார்வையாளர்கள் பிரபலமான வைரம் பதித்த தங்க சிம்மாசனம் மற்றும் கையால் எழுதப்பட்ட கையெழுத்துப் பிரதிகளை ஆராயலாம், ஒவ்வொரு பொருளும் கைவினைத்திறன் மற்றும் வரலாற்றின் தனித்துவமான கதையைச் சொல்கிறது.",
+        storyParagraph3: "அருங்காட்சியகம் வரலாற்று சிறப்புமிக்க புராணி ஹவெலியில் அமைந்துள்ளது, இது நிசாம்களின் ஆட்சியின் போது அவர்களின் அதிகாரப்பூர்வ குடியிருப்பாக பணியாற்றிய ஒரு அற்புதமான அரண்மனை. 18 ஆம் நூற்றாண்டில் கட்டப்பட்ட இந்த கட்டிடக்கலை அதிசயம், பரந்த முற்றங்கள், நேர்த்தியான வளைவுகள் மற்றும் அந்த காலத்தின் இந்தோ-ஐரோப்பிய செல்வாக்குகளை வெளிப்படுத்தும் விரிவான ஓவியங்களை கொண்டுள்ளது. இன்று, இது ஒரு கலாச்சார மையமாக பணியாற்றுகிறது, வரலாற்றாசிரியர்கள், சுற்றுலாப் பயணிகள் மற்றும் உள்ளூர் மக்களை ஈர்க்கிறது, அவர்கள் ஹைதராபாத்தின் அரச மரபுடன் இணைவதற்கு ஆர்வமாக உள்ளனர்.",
+        ourHistory: "எங்கள் வரலாறு",
+        historyEvent1: "ஹைதராபாத் நிறுவப்பட்டது",
+        historyDetail1: "முகம்மது குலி குதுப் ஷா, குதுப் ஷாஹி வம்சத்தின் ஐந்தாவது ஆட்சியாளர், 1591 ஆம் ஆண்டு சார்மினாருக்கு அருகில் ஹைதராபாத்தை நிறுவினார். பாரசீக தலைநகரங்களின் பெருமையை சமநிலைப்படுத்தும் ஒரு நகரத்தை கற்பனை செய்து, அவர் முசி ஆற்றின் கரையில் அதன் அடித்தளத்தை அமைத்தார். இது ஹைதராபாத்தின் கலாச்சார மற்றும் பொருளாதார மையமாக அதன் பயணத்தின் தொடக்கத்தைக் குறித்தது, இஸ்லாமிய கட்டிடக்கலை உள்ளூர் மரபுகளுடன் கலந்து, இன்று நகரத்தை வரையறுக்கும் ஒரு மரபு தொடர்கிறது.",
+        historyEvent2: "அசாப் ஜாஹி வம்சம் தொடங்குகிறது",
+        historyDetail2: "அசாப் ஜாஹி வம்சம் 1724 ஆம் ஆண்டு நிசாம்-உல்-முல்க் அசாப் ஜா I ஆல் நிறுவப்பட்டது, அவர் முகலாய பேரரசு சரிவுக்குப் பிறகு சுதந்திரத்தை அறிவித்த ஒரு சக்திவாய்ந்த முகலாய ஆளுநர். அவரது ஆட்சி ஹைதராபாத்திற்கு செழிப்பு மற்றும் சுயாட்சியின் ஒரு சகாப்தத்தை உருவாக்கியது, இதை இந்தியாவின் மிகவும் செல்வாக்கு மிக்க அரசாங்க ராஜ்யங்களில் ஒன்றாக நிறுவியது. நிசாம்களின் கீழ், இப்பகுதி நிர்வாகம், கல்வி மற்றும் உள்கட்டமைப்பில் முன்னேற்றங்களைக் கண்டது, அதன் நவீன அடையாளத்திற்கு அடித்தளம் அமைத்தது.",
+        historyEvent3: "அருங்காட்சியகம் தொடங்கப்பட்டது",
+        historyDetail3: "நிசாம் அருங்காட்சியகம் 2000 ஆம் ஆண்டு புராணி ஹவெலியின் சுவர்களுக்குள் அதிகாரப்பூர்வமாக பொதுமக்களுக்கு திறக்கப்பட்டது, நிசாம்களின் பணக்கார வரலாற்றை பாதுகாக்கவும் பகிர்ந்து கொள்ளவும் இந்த நடவடிக்கை நோக்கமாகக் கொண்டது. இந்த முயற்சி வரலாற்றாசிரியர்கள், அரசு மற்றும் அரச வம்ச வாரிசுகளுக்கு இடையேயான ஒத்துழைப்பால் இயக்கப்பட்டது, அசாப் ஜாஹி வம்சத்தின் மரபு அணுகக்கூடியதாக இருப்பதை உறுதி செய்தது. அதன் தொடக்கத்திலிருந்து, அருங்காட்சியகம் எண்ணற்ற பார்வையாளர்களை வரவேற்றுள்ளது, ஹைதராபாத்தின் அரச கடந்த காலத்தை கொண்டாடும் கல்வி நிகழ்ச்சிகள், வழிகாட்டப்பட்ட சுற்றுப்பயணங்கள் மற்றும் கண்காட்சிகளை வழங்குகிறது."
+      },
+      hi: {
+        navHome: "होम",
+        navExhibits: "प्रदर्शनियाँ",
+        navDonate: "दान करें",
+        navEvents: "कार्यक्रम",
+        navAbout: "के बारे में",
+        ourStory: "हमारी कहानी",
+        preservingLegacy: "हैदराबाद की शाही विरासत को संरक्षित करना",
+        storyParagraph1: "निज़ाम संग्रहालय की स्थापना 2000 में एक महान मिशन के साथ की गई थी, ताकि असफ जाही वंश की समृद्ध सांस्कृतिक विरासत को प्रदर्शित किया जा सके, जिसने दो सौ से अधिक वर्षों तक हैदराबाद पर शासन किया था। शहर के केंद्र में स्थित यह संस्थान बीते युग की ऐश्वर्य और भव्यता का प्रमाण है। संग्रहालय न केवल कलाकृतियों को संरक्षित करता है, बल्कि हैदराबाद के एक रियासत राज्य से आधुनिक महानगर में परिवर्तन की कहानी भी सुनाता है, जो आगंतुकों को इसके ऐतिहासिक अतीत की एक झलक प्रदान करता है।",
+        storyParagraph2: "हमारे संग्रह में निज़ामों के युग की दुर्लभ कलाकृतियाँ शामिल हैं, जिसमें विशेष रूप से VII निज़ाम, मीर उस्मान अली खान पर ध्यान केंद्रित किया गया है, जो कभी दुनिया के सबसे धनी व्यक्तियों में से एक थे। इन खजानों में जटिल रूप से डिज़ाइन किए गए आभूषण, अलंकृत फर्नीचर और शाही परिवार के शानदार जीवन शैली को दर्शाने वाली निजी वस्तुएँ शामिल हैं। आगंतुक प्रसिद्ध हीरे जड़ित सोने के सिंहासन और हस्तलिखित पांडुलिपियों जैसे वस्तुओं को देख सकते हैं, प्रत्येक टुकड़ा शिल्प कौशल और इतिहास की एक अनूठी कहानी कहता है।",
+        storyParagraph3: "संग्रहालय ऐतिहासिक पुरानी हवेली में स्थित है, जो निज़ामों के शासनकाल के दौरान उनका आधिकारिक निवास स्थान था। 18वीं शताब्दी में निर्मित यह वास्तुशिल्प चमत्कार विशाल आंगनों, सुंदर मेहराबों और विस्तृत भित्तिचित्रों से सुसज्जित है, जो उस समय के भारत-यूरोपीय प्रभावों को उजागर करते हैं। आज, यह एक सांस्कृतिक केंद्र के रूप में कार्य करता है, जो इतिहासकारों, पर्यटकों और स्थानीय लोगों को आकर्षित करता है, जो हैदराबाद की शाही विरासत से जुड़ना चाहते हैं।",
+        ourHistory: "हमारा इतिहास",
+        historyEvent1: "हैदराबाद की स्थापना",
+        historyDetail1: "मोहम्मद कुली कुतुब शाह, कुतुब शाही वंश के पांचवे शासक ने 1591 में चारमीनार के पास हैदराबाद की स्थापना की। फारसी राजधानियों की भव्यता के साथ प्रतिस्पर्धा करने वाले शहर की कल्पना करते हुए, उन्होंने मुसी नदी के तट पर इसकी नींव रखी। इसने हैदराबाद की सांस्कृतिक और आर्थिक केंद्र के रूप में यात्रा की शुरुआत को चिह्नित किया, इस्लामी वास्तुकला को स्थानीय परंपराओं के साथ मिश्रित करते हुए, एक विरासत जो आज भी शहर को परिभाषित करती है।",
+        historyEvent2: "असफ जाही वंश की शुरुआत",
+        historyDetail2: "असफ जाही वंश की स्थापना 1724 में निज़ाम-उल-मुल्क असफ जाह I ने की थी, जो एक शक्तिशाली मुगल गवर्नर थे, जिन्होंने मुगल साम्राज्य के पतन के बाद स्वतंत्रता की घोषणा की थी। उनके शासन ने हैदराबाद के लिए समृद्धि और स्वायत्तता का एक युग शुरू किया, जिसे भारत के सबसे प्रभावशाली रियासत राज्यों में से एक के रूप में स्थापित किया। निज़ामों के तहत, क्षेत्र ने प्रशासन, शिक्षा और बुनियादी ढांचे में प्रगति देखी, जो इसकी आधुनिक पहचान के लिए आधार तैयार करती थी।",
+        historyEvent3: "संग्रहालय का उद्घाटन",
+        historyDetail3: "निज़ाम संग्रहालय को 2000 में पुरानी हवेली की दीवारों के भीतर आधिकारिक रूप से जनता के लिए खोला गया था, जिसका उद्देश्य निज़ामों के समृद्ध इतिहास को संरक्षित करना और साझा करना था। यह पहल इतिहासकारों, सरकार और शाही वंशजों के बीच सहयोग से प्रेरित थी ताकि असफ जाही वंश की विरासत सुलभ रहे। अपनी स्थापना के बाद से, संग्रहालय ने अनगिनत आगंतुकों का स्वागत किया है, जो हैदराबाद के शाही अतीत का जश्न मनाने वाले शैक्षिक कार्यक्रम, निर्देशित पर्यटन और प्रदर्शनियाँ प्रदान करता है।"
+      }
+    };
+
+    function changeLanguage() {
+      const selectedLanguage = document.getElementById('languageSelect').value;
+      const translation = translations[selectedLanguage];
+
+      document.getElementById('navHome').textContent = translation.navHome;
+      document.getElementById('navExhibits').textContent = translation.navExhibits;
+      document.getElementById('navDonate').textContent = translation.navDonate;
+      document.getElementById('navEvents').textContent = translation.navEvents;
+      document.getElementById('navAbout').textContent = translation.navAbout;
+      document.getElementById('ourStory').textContent = translation.ourStory;
+      document.getElementById('preservingLegacy').textContent = translation.preservingLegacy;
+      document.getElementById('storyParagraph1').textContent = translation.storyParagraph1;
+      document.getElementById('storyParagraph2').textContent = translation.storyParagraph2;
+      document.getElementById('storyParagraph3').textContent = translation.storyParagraph3;
+      document.getElementById('ourHistory').textContent = translation.ourHistory;
+      document.getElementById('historyEvent1').textContent = translation.historyEvent1;
+      document.getElementById('historyDetail1').textContent = translation.historyDetail1;
+      document.getElementById('historyEvent2').textContent = translation.historyEvent2;
+      document.getElementById('historyDetail2').textContent = translation.historyDetail2;
+      document.getElementById('historyEvent3').textContent = translation.historyEvent3;
+      document.getElementById('historyDetail3').textContent = translation.historyDetail3;
+    }
+  </script>
+</body>
+</html>

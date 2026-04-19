@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Museum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <!-- <link rel="preload" href="bg1.jpg" as="image" /> -->
+  <link rel="preload" href="slide1.jpg" as="image" />
+  <link rel="stylesheet" href="Hhome.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="slider-container">
+    <nav class="navbar">
+      <div class="logo">Museum</div>
+      <ul class="nav-links">
+        <li><a href="Hhome.html">Home</a></li>
+        <li><a href="exhibits2.html">Exhibits</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="map.html">Maps</a></li>
+        <li>
+          <a href="#" id="login-link" class="bubble-button" style="margin-left: 20px;"></a>
+        </li>
+      </ul>
+      
+    </nav>
+    <div class="slider">
+      <div class="slide active">
+        <img src="slide1.jpg" alt="Inside the Museum" onerror="this.src='https://via.placeholder.com/1920x1080'" />
+      </div> 
+      <div class="slide">
+        <img src="slide2 (2).jpg" alt="Ancient Artifact Exhibit" onerror="this.src='https://via.placeholder.com/1920x1080'" />
+      </div>
+      <div class="slide">
+        <img src="slide3.jpg" alt="Historical Architecture" onerror="this.src='https://via.placeholder.com/1920x1080'" />
+      </div>
+    </div>
+    <div class="dots">
+      <div class="dot active" onclick="currentSlide(0)" role="button" tabindex="0" aria-label="Go to slide 1"></div>
+      <div class="dot" onclick="currentSlide(1)" role="button" tabindex="0" aria-label="Go to slide 2"></div>
+      <div class="dot" onclick="currentSlide(2)" role="button" tabindex="0" aria-label="Go to slide 3"></div>
+    </div>
+    <div class="overlay-content">
+      <h1 id="welcome-message"></h1>
+      <p>Discover ancient artifacts and timeless stories.</p>
+      <a href="viewmore.html" class="bubble-button">View More</a>
+
+
+      <div class="event-spotlight">
+        <p>Upcoming Event: Art Workshop - May 15, 2025</p>
+      </div>
+    </div>
+  </div>
+  <button id="chatbot-icon" onclick="toggleChat()" aria-label="Open chatbot">💬</button>
+  <div id="chat-popup">
+    <div id="chat-header">
+      <span>Museum Assistant</span>
+      <div class="header-icons">
+        <span id="home-icon" onclick="resetChat()">🏠</span>
+        <span id="cart-icon" onclick="viewCart()">🛒</span>
+      </div>
+    </div>
+    <div id="chat-body">
+      <div class="message bot-message">
+        Hello! How can I assist you today?
+        <div class="message-timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+      </div>
+      <div class="option" onclick="showResponse('option1')">Book Tickets</div>
+      <div class="option" onclick="showResponse('option2')">Holidays and FAQs</div>
+      <div class="option" onclick="showResponse('option3')">Food Courts & Bus Services</div>
+      <div class="option" onclick="showResponse('option4')">Contact Us</div>
+      <div class="option" onclick="showResponse('option5')">Leave a Review</div>
+    </div>
+    <div class="chat-footer">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." aria-label="Chat input" onkeydown="if(event.key === 'Enter') handleInput(this.value);">
+      <button onclick="goBack()" id="backBtn" style="display: none;">Back</button>
+      <button onclick="closeChat()">Close</button>
+    </div>
+  </div>
+  <script>
+    const museumData = {
+      foodCourts: {
+        rumaan: {
+          name: 'Rumaan Restaurant',
+          categories: {
+            'Main Course': [
+              { item: 'Chicken Biryani (Single)', price: 140 },
+              { item: 'Mutton Biryani (Single)', price: 160 },
+              { item: 'Rumali Roti', price: 12 },
+              { item: 'Tandoori Roti', price: 20 },
+              { item: 'Butter Naan', price: 25 }
+            ],
+            'Beverages': [
+              { item: 'Tea (Full)', price: 24 },
+              { item: 'Soft Drinks', price: 20 }
+            ],
+            'Desserts': [
+              { item: 'Gulab Jamun', price: 30 },
+              { item: 'Qubani Ka Meetha', price: 40 }
+            ]
+          }
+        },
+        shadab: {
+          name: 'Hotel Shadab',
+          categories: {
+            'Main Course': [
+              { item: 'Mutton Biryani', price: 270 },
+              { item: 'Chicken Biryani', price: 260 },
+              { item: 'Veg Biryani', price: 210 },
+              { item: 'Shadab Special Mutton Biryani', price: 390 },
+              { item: 'Shadab Special Chicken Biryani', price: 360 }
+            ],
+            'Starters': [
+              { item: 'Chicken Tikka Kebab (6 pcs)', price: 349 },
+              { item: 'Paneer Tikka Kebab (6 pcs)', price: 324 },
+              { item: 'Chicken Malai Kebab (6 pcs)', price: 349 },
+              { item: 'Fish Tikka Kebab (6 pcs)', price: 359 }
+            ],
+            'Desserts': [
+              { item: 'Qubani Ka Meetha', price: 60 },
+              { item: 'Double Ka Meetha', price: 60 }
+            ],
+            'Beverages': [
+              { item: 'Lassi', price: 50 },
+              { item: 'Soft Drinks', price: 20 }
+            ]
+          }
+        },
+        golden: {
+          name: 'Golden Palace Restaurant',
+          categories: {
+            'Main Course': [
+              { item: 'Chicken Biryani', price: 180 },
+              { item: 'Mutton Biryani', price: 220 },
+              { item: 'Veg Biryani', price: 150 }
+            ],
+            'Starters': [
+              { item: 'Chicken 65', price: 160 },
+              { item: 'Paneer 65', price: 140 },
+              { item: 'Veg Manchurian', price: 120 }
+            ],
+            'Beverages': [
+              { item: 'Soft Drinks', price: 20 },
+              { item: 'Coffee', price: 15 }
+            ]
+          }
+        },
+        jewel: {
+          name: 'Jewel of Nizam – The Golkonda Hotel',
+          categories: {
+            'Main Course': [
+              { item: 'Hyderabadi Gosht Biryani', price: 290 },
+              { item: 'Kacchi Dum Biryani', price: 290 },
+              { item: 'Subzi Diwani Handi', price: 160 },
+              { item: 'Kaju Khumb Makhna', price: 160 },
+              { item: 'Jinga Kadi (Prawn Curry)', price: 260 },
+              { item: 'Machi Ka Salan (Fish Curry)', price: 260 }
+            ],
+            'Starters': [
+              { item: 'Murgh Malai Kebab', price: 250 },
+              { item: 'Kachee Kebab (Grilled Lamb Cutlets)', price: 260 },
+              { item: 'Aloo Ke Garley (Potato Fritters)', price: 150 }
+            ],
+            'Desserts': [
+              { item: 'Firni', price: 100 },
+              { item: 'Shahi Tukda', price: 100 },
+              { item: 'Anokhi Kheer', price: 100 }
+            ],
+            'Beverages': [
+              { item: 'Amrud ki Lassi', price: 350 },
+              { item: 'Shikanjavi', price: 350 },
+              { item: 'Gulab Ras Thandai', price: 350 },
+              { item: 'Adraki Burhani', price: 350 }
+            ]
+          }
+        },
+        lingaiah: {
+          name: 'Lingaiah Tiffin Centre',
+          categories: {
+            'Breakfast': [
+              { item: 'Idli (2 pieces)', price: 45 },
+              { item: 'Butter Idli (2 pieces)', price: 70 },
+              { item: 'Vada (2 pieces)', price: 45 },
+              { item: 'Butter Paneer Dosa', price: 60 },
+              { item: 'Masala Dosa', price: 40 },
+              { item: 'Tawa Vada', price: 40 },
+              { item: 'Butter Idli', price: 50 },
+              { item: 'Pancakes', price: 50 }
+            ],
+            'Beverages': [
+              { item: 'Tea', price: 10 },
+              { item: 'Coffee', price: 15 }
+            ]
+          }
+        }
+      },
+      busSchedules: [
+        { bus: 'Bus 1', time: '8:00 AM - 10:00 AM' },
+        { bus: 'Bus 2', time: '11:00 AM - 2:00 PM' },
+        { bus: 'Bus 3', time: '3:00 PM - 8:00 PM (last bus)' }
+      ],
+      holidays: [
+        'New Year’s Day',
+        'Independence Day',
+        'Government Holidays',
+        'Christmas Day'
+      ],
+      exhibits: [
+        { name: 'Nizam’s Jewels', duration: 'Ongoing' },
+        { name: 'Ancient Scripts', duration: 'Until Dec 2025' }
+      ],
+      faqs: [
+        { question: 'What are the museum hours?', answer: 'Our museum hours are 9:00 AM to 6:00 PM daily.' },
+        { question: 'How do I book tickets?', answer: 'You can book tickets online or at the entrance.' },
+        { question: 'Are there any discounts available?', answer: 'Yes, we offer discounts for students, seniors, and groups.' },
+        { question: 'What is the average number of visitors per day?', answer: 'Average visitors per day:<br>- Sunday: 200<br>- Monday: 150<br>- Tuesday: 120<br>- Wednesday: 130<br>- Thursday: 140<br>- Friday: 180<br>- Saturday: 170' }
+      ]
+    };
+
+    const responses = {
+      ticket: { message: 'Tickets are ₹80 for adults and ₹50 for children. Ready to book? How many adults?', options: [1, 2, 3, 4, 5].map(num => ({ text: num.toString(), callback: () => selectAdults(num) })) },
+      hours: { message: 'We’re open from 9:00 AM to 6:00 PM daily. Planning a visit?', options: [{ text: 'Yes, book tickets', callback: () => showResponse('option1') }, { text: 'No, just curious', callback: () => appendMessage('No worries! Anything else I can help with?') }] },
+      bus: { message: `Bus Schedules:<br>${museumData.busSchedules.map(s => `- ${s.bus}: ${s.time}`).join('<br>')}<br>Need help planning your trip?`, options: [{ text: 'Yes, book tickets', callback: () => showResponse('option1') }, { text: 'No', callback: () => appendMessage('Okay, let me know if you need anything else!') }] },
+      food: { message: 'We’ve got a variety of food courts near the museum! Which one sounds good to you?', options: Object.keys(museumData.foodCourts).map(key => ({ text: museumData.foodCourts[key].name, callback: () => showResponse(key) })) },
+      holiday: { message: `We’re closed on:<br>- ${museumData.holidays.join('<br>- ')}<br>Want to check something else?`, options: [{ text: 'Yes, FAQs', callback: () => showResponse('faqs') }, { text: 'No', callback: () => appendMessage('Alright, happy to assist with anything else!') }] },
+      faq: { message: 'Got a question? Here are some common ones:', options: museumData.faqs.map((faq, i) => ({ text: faq.question, callback: () => showFAQ(i + 1) })) },
+      exhibit: { message: `Current exhibits:<br>${museumData.exhibits.map(e => `- ${e.name} (${e.duration})`).join('<br>')}<br>Excited to see them?`, options: [{ text: 'Yes, book tickets', callback: () => showResponse('option1') }, { text: 'Tell me more', callback: () => appendMessage('Nizam’s Jewels features royal treasures, and Ancient Scripts showcases rare manuscripts!') }] },
+      contact: { message: 'Reach us at:<br>Email: info@nizamsmuseum.org<br>Phone: +1-555-123-4567<br>Got a question to send?', options: [{ text: 'Yes', callback: () => showResponse('option4') }, { text: 'No', callback: () => appendMessage('Okay, anything else I can do for you?') }] },
+      review: { message: 'We’d love to hear your thoughts! Please leave your review:', options: [] },
+      vegan: { message: 'We’ve got veggie options nearby! Try Golden Palace (Veg Biryani, Veg Manchurian) or Jewel of Nizam (Subzi Diwani Handi). Want the full menu?', options: [{ text: 'Golden Palace', callback: () => showResponse('golden') }, { text: 'Jewel of Nizam', callback: () => showResponse('jewel') }, { text: 'No thanks', callback: () => appendMessage('Alright, anything else you’re curious about?') }] },
+      discount: { message: 'We offer discounts for students, seniors, and groups! Ready to book with a discount?', options: [{ text: 'Yes', callback: () => showResponse('option1') }, { text: 'No', callback: () => appendMessage('No problem, let me know how else I can assist!') }] },
+      location: { message: 'We’re at 123 Heritage Lane, Hyderabad, India. Need directions or transport info?', options: [{ text: 'Bus Schedule', callback: () => showResponse('bus') }, { text: 'No, I’m good', callback: () => appendMessage('Great, anything else on your mind?') }] },
+      access: { message: 'The museum is fully accessible with ramps, elevators, and wheelchair rentals. Need more details?', options: [{ text: 'Yes', callback: () => appendMessage('Contact us at +1-555-123-4567 for specific accommodations!') }, { text: 'No', callback: () => appendMessage('Glad to help! Anything else?') }] },
+      event: { message: 'Upcoming events:<br>- Art Workshop: May 15, 2025<br>- History Talk: June 10, 2025<br>Interested in booking for one?', options: [{ text: 'Yes', callback: () => showResponse('option1') }, { text: 'No', callback: () => appendMessage('Okay, check back for more events!') }] },
+      donate: { message: 'Support us with a donation! Want to contribute?', options: [{ text: 'Yes', callback: () => appendMessage('Visit nizamsmuseum.org/donate or contact us!') }, { text: 'No', callback: () => appendMessage('Thanks for considering it! Anything else?') }] },
+      tour: { message: 'Guided tours are available daily at 10 AM and 2 PM for ₹100 extra per ticket. Want to book one?', options: [{ text: 'Yes', callback: () => showResponse('option1') }, { text: 'No', callback: () => appendMessage('No worries, enjoy exploring on your own!') }] },
+      member: { message: 'Become a member for ₹1000/year and enjoy unlimited visits plus perks! Interested?', options: [{ text: 'Yes', callback: () => appendMessage('Sign up at nizamsmuseum.org/membership or at the entrance!') }, { text: 'No', callback: () => appendMessage('Alright, let me know if you change your mind!') }] },
+      shop: { message: 'Our gift shop has books, replicas, and more! Open 9 AM - 6 PM. Want some recommendations?', options: [{ text: 'Yes', callback: () => appendMessage('Try the Nizam’s Jewel replica (₹500) or our history book (₹300)!') }, { text: 'No', callback: () => appendMessage('Okay, stop by when you visit!') }] },
+      hello: { message: 'Hi there! How can I make your museum visit even better today?', options: [{ text: 'Book Tickets', callback: () => showResponse('option1') }, { text: 'Explore Options', callback: () => resetChat() }] },
+      thanks: { message: 'You’re welcome! Anything else I can assist you with?', options: [] }
+    };
+
+    let slideIndex = 0, adults = 0, children = 0, total = 0, selectedPaymentMethod = '', previousStates = [], slideTimer;
+    let cart = [], foodTotal = 0, orderHistory = [];
+    const slides = document.querySelectorAll('.slide'), dots = document.querySelectorAll('.dot');
+    const funFacts = [
+      "Did you know? The Nizam’s jewels include a 185-carat diamond!",
+      "Fun fact: The museum houses artifacts over 200 years old!",
+      "Did you know? The Nizam’s throne was made of pure gold!"
+    ];
+
+    function setDynamicWelcome() {
+      const hour = new Date().getHours();
+      const welcome = document.getElementById('welcome-message');
+      if (hour < 12) welcome.textContent = "Good Morning! Welcome to the Nizam's Museum";
+      else if (hour < 18) welcome.textContent = "Good Afternoon! Welcome to the Nizam's Museum";
+      else welcome.textContent = "Good Evening! Welcome to the Nizam's Museum";
+    }
+
+    function showSlides() {
+      slides.forEach((slide, index) => {
+        slide.classList.remove('active');
+        dots[index].classList.remove('active');
+      });
+      slideIndex = (slideIndex + 1) % slides.length;
+      slides[slideIndex].classList.add('active');
+      dots[slideIndex].classList.add('active');
+      slideTimer = setTimeout(showSlides, 4000);
+    }
+
+    function currentSlide(index) {
+      clearTimeout(slideTimer);
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        dots[i].classList.remove('active');
+      });
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      slideIndex = index;
+      slideTimer = setTimeout(showSlides, 4000);
+    }
+
+    function toggleChat() {
+      const chatbot = document.getElementById('chat-popup');
+      chatbot.style.display = chatbot.style.display === 'none' || chatbot.style.display === '' ? 'flex' : 'none';
+      if (chatbot.style.display === 'flex' && previousStates.length === 0) resetChat();
+      scrollToBottom();
+    }
+
+    function closeChat() {
+      document.getElementById('chat-popup').style.display = 'none';
+      resetChat();
+    }
+
+    function scrollToBottom() {
+      const chatBody = document.getElementById('chat-body');
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function appendMessage(content, isUser = false) {
+      const chatBody = document.getElementById('chat-body');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+      messageDiv.innerHTML = content + `<div class="message-timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`;
+      chatBody.appendChild(messageDiv);
+      scrollToBottom();
+    }
+
+    function clearChatBody() {
+      document.getElementById('chat-body').innerHTML = '';
+    }
+
+    function addOption(text, callback) {
+      const chatBody = document.getElementById('chat-body');
+      const opt = document.createElement('div');
+      opt.className = 'option';
+      opt.textContent = text;
+      opt.setAttribute('role', 'button');
+      opt.setAttribute('tabindex', '0');
+      opt.onclick = callback;
+      opt.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') opt.click(); };
+      chatBody.appendChild(opt);
+      scrollToBottom();
+    }
+
+    function saveState() {
+      const chatBody = document.getElementById('chat-body');
+      const messages = Array.from(chatBody.querySelectorAll('.message')).map(m => ({
+        content: m.childNodes[0].nodeValue || '',
+        isUser: m.classList.contains('user-message')
+      }));
+      const options = Array.from(chatBody.querySelectorAll('.option')).map(o => ({
+        text: o.textContent,
+        callback: o.onclick
+      }));
+      previousStates.push({ messages, options, cart, foodTotal });
+    }
+
+    function restoreState(state) {
+      clearChatBody();
+      state.messages.forEach(m => appendMessage(m.content, m.isUser));
+      state.options.forEach(o => addOption(o.text, o.callback));
+      cart = state.cart;
+      foodTotal = state.foodTotal;
+    }
+
+    function showResponse(type) {
+      saveState();
+      clearChatBody();
+      let userMessage = '';
+      switch (type) {
+        case 'option1': userMessage = 'Book Tickets'; break;
+        case 'option2': userMessage = 'Holidays and FAQs'; break;
+        case 'option3': userMessage = 'Food Courts & Bus Services'; break;
+        case 'option4': userMessage = 'Contact Us'; break;
+        case 'option5': userMessage = 'Leave a Review'; break;
+        case 'orderHistory': userMessage = 'Order History'; break;
+        case 'holidays': userMessage = 'Holidays'; break;
+        case 'faqs': userMessage = 'FAQs'; break;
+        case 'exhibits': userMessage = 'Current Exhibits'; break;
+        case 'food': userMessage = 'Food Courts'; break;
+        case 'bus': userMessage = 'Bus Services'; break;
+        case 'rumaan': userMessage = 'Rumaan Restaurant'; break;
+        case 'shadab': userMessage = 'Hotel Shadab'; break;
+        case 'golden': userMessage = 'Golden Palace Restaurant'; break;
+        case 'jewel': userMessage = 'Jewel of Nizam – The Golkonda Hotel'; break;
+        case 'lingaiah': userMessage = 'Lingaiah Tiffin Centre'; break;
+      }
+      appendMessage(userMessage, true);
+
+      setTimeout(() => {
+        switch (type) {
+          case 'option1':
+            currentSlide(0);
+            appendMessage('How many adults?');
+            [1, 2, 3, 4, 5].forEach(num => addOption(num.toString(), () => selectAdults(num)));
+            break;
+          case 'option2':
+            currentSlide(1);
+            appendMessage('Please select an option:');
+            addOption('Holidays', () => showResponse('holidays'));
+            addOption('FAQs', () => showResponse('faqs'));
+            addOption('Current Exhibits', () => showResponse('exhibits'));
+            break;
+          case 'holidays':
+            appendMessage(`Our museum is closed on:<br>- ${museumData.holidays.join('<br>- ')}`);
+            break;
+          case 'faqs':
+            appendMessage('Please select a question:');
+            museumData.faqs.forEach((faq, i) => addOption(faq.question, () => showFAQ(i + 1)));
+            break;
+          case 'exhibits':
+            appendMessage(`Current Exhibits:<br>${museumData.exhibits.map(e => `- ${e.name} (${e.duration})`).join('<br>')}`);
+            break;
+          case 'option3':
+            appendMessage('Please select an option:');
+            addOption('Food Courts', () => showResponse('food'));
+            addOption('Bus Services', () => showResponse('bus'));
+            break;
+          case 'food':
+            appendMessage('Please select a food court or a combo:');
+            Object.keys(museumData.foodCourts).forEach(key => addOption(museumData.foodCourts[key].name, () => showResponse(key)));
+            addOption('Combo: Chicken Biryani + Soft Drink (₹160)', () => quickAddCombo({
+              text: 'Chicken Biryani + Soft Drink (₹160)',
+              items: [
+                { item: 'Chicken Biryani (Single)', price: 140, restaurant: 'Rumaan Restaurant' },
+                { item: 'Soft Drinks', price: 20, restaurant: 'Rumaan Restaurant' }
+              ],
+              total: 160
+            }));
+            addOption('Combo: Masala Dosa + Coffee (₹55)', () => quickAddCombo({
+              text: 'Masala Dosa + Coffee (₹55)',
+              items: [
+                { item: 'Masala Dosa', price: 40, restaurant: 'Lingaiah Tiffin Centre' },
+                { item: 'Coffee', price: 15, restaurant: 'Lingaiah Tiffin Centre' }
+              ],
+              total: 55
+            }));
+            addOption('View Cart', () => viewCart());
+            break;
+          case 'rumaan':
+          case 'shadab':
+          case 'golden':
+          case 'jewel':
+          case 'lingaiah':
+            appendMessage(`Categories at ${museumData.foodCourts[type].name}:`);
+            Object.keys(museumData.foodCourts[type].categories).forEach(category => 
+              addOption(category, () => showCategoryMenu(type, category))
+            );
+            addOption('View Cart', () => viewCart());
+            addOption('Back to Food Courts', () => showResponse('food'));
+            break;
+          case 'bus':
+            appendMessage(`Bus Schedules:<br>${museumData.busSchedules.map(s => `- ${s.bus}: ${s.time}`).join('<br>')}`);
+            break;
+          case 'option4':
+            appendMessage('Contact Us:<br>Email: info@nizamsmuseum.org<br>Phone: +1-555-123-4567<br>Type your question below:');
+            break;
+          case 'option5':
+            currentSlide(2);
+            appendMessage('Please leave your review below:');
+            break;
+          case 'orderHistory':
+            if (orderHistory.length === 0) {
+              appendMessage('No orders yet. Want to order some food?');
+              addOption('Yes', () => showResponse('food'));
+            } else {
+              appendMessage(`Your Order History:<br>${orderHistory.map(o => `- ${o.date}: ₹${o.total} (${o.items})`).join('<br>')}`);
+            }
+            break;
+        }
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function showCategoryMenu(restaurant, category) {
+      saveState();
+      clearChatBody();
+      appendMessage(category, true);
+      setTimeout(() => {
+        const items = museumData.foodCourts[restaurant].categories[category];
+        appendMessage(`${category} at ${museumData.foodCourts[restaurant].name}:<br>${items.map(item => `- ${item.item} (₹${item.price})`).join('<br>')}`);
+        items.forEach(item => addOption(`${item.item} (₹${item.price})`, () => addToCart(restaurant, category, item)));
+        addOption('View Cart', () => viewCart());
+        addOption('Back to Categories', () => showResponse(restaurant));
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function addToCart(restaurant, category, item) {
+      cart.push({
+        item: item.item,
+        price: item.price,
+        restaurant: restaurant
+      });
+      foodTotal += item.price;
+      saveState();
+      clearChatBody();
+      appendMessage(`${item.item} (₹${item.price})`, true);
+      setTimeout(() => {
+        appendMessage(`Added ${item.item} to your cart. Cart total: ₹${foodTotal}. Add more from ${category}?`);
+        const items = museumData.foodCourts[restaurant].categories[category];
+        items.forEach(i => addOption(`${i.item} (₹${i.price})`, () => addToCart(restaurant, category, i)));
+        addOption('View Cart', () => viewCart());
+        addOption('Back to Categories', () => showResponse(restaurant));
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function quickAddCombo(combo) {
+      saveState();
+      clearChatBody();
+      appendMessage(combo.text, true);
+      setTimeout(() => {
+        combo.items.forEach(item => cart.push(item));
+        foodTotal += combo.total;
+        appendMessage(`Added ${combo.text} to your cart. Cart total: ₹${foodTotal}. Want to add more?`);
+        addOption('Yes', () => showResponse('food'));
+        addOption('View Cart', () => viewCart());
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function viewCart() {
+      saveState();
+      clearChatBody();
+      appendMessage('View Cart', true);
+      setTimeout(() => {
+        if (cart.length === 0) {
+          appendMessage('Your cart is empty. Want to add some food?');
+          addOption('Yes', () => showResponse('food'));
+          addOption('No', () => resetChat());
+        } else {
+          const cartDetails = cart.map(item => `- ${item.item} (₹${item.price}) from ${item.restaurant}`).join('<br>');
+          appendMessage(`Your Cart:<br>${cartDetails}<br>Total: ₹${foodTotal}<br>What would you like to do?`);
+          addOption('Confirm Order', () => confirmOrder());
+          addOption('Add More Items', () => showResponse('food'));
+          addOption('Clear Cart', () => clearCart());
+        }
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function confirmOrder() {
+      saveState();
+      clearChatBody();
+      appendMessage('Confirm Order', true);
+      setTimeout(() => {
+        const cartDetails = cart.map(item => `- ${item.item} (₹${item.price}) from ${item.restaurant}`).join('<br>');
+        appendMessage(`Final Bill:<br>${cartDetails}<br>Total: ₹${foodTotal}. Ready to book your food?`);
+        addOption('Yes, Book Now', () => bookFood());
+        addOption('No, Add More', () => showResponse('food'));
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function showQRCode(amount, onPaidCallback) {
+      setTimeout(() => {
+        const qrDiv = document.createElement('div');
+        qrDiv.className = 'qr-container';
+
+        // Create UPI payment URL
+        const upi_id = "6305533637@ptsbi";
+        const upi_url = `upi://pay?pa=${upi_id}&pn=Museum&am=${amount}&cu=INR`;
+
+        // Generate QR code
+        const typeNumber = 4;
+        const errorCorrectionLevel = 'L';
+        const qr = qrcode(typeNumber, errorCorrectionLevel);
+        qr.addData(upi_url);
+        qr.make();
+
+        // Get QR code as HTML
+        const qrHTML = qr.createImgTag(5);
+
+        // Add QR code and payment info to div
+        qrDiv.innerHTML = `
+          ${qrHTML}
+          <p>Pay ₹${amount} using any UPI app</p>
+          <p>UPI ID: ${upi_id}</p>
+          <button id="qrPaidBtn" class="payment-button">I have paid</button>
+          <div style="font-size:0.85em;color:#2196f3;margin-top:6px;">Enjoy Museum !</div>
+        `
+
+        // Add to chat
+        document.getElementById('chat-body').appendChild(qrDiv);
+        
+        // Add click handler for payment button
+        document.getElementById('qrPaidBtn').onclick = onPaidCallback;
+
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function showFAQ(num) {
+      saveState();
+      clearChatBody();
+      const faq = museumData.faqs[num - 1];
+      appendMessage(faq.question, true);
+      setTimeout(() => {
+        appendMessage(faq.answer);
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function selectAdults(num) {
+      adults = num;
+      saveState();
+      clearChatBody();
+      appendMessage(num.toString(), true);
+      setTimeout(() => {
+        appendMessage('How many children?');
+        [0, 1, 2, 3, 4].forEach(num => addOption(num.toString(), () => selectChildren(num)));
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function selectChildren(num) {
+      children = num;
+      saveState();
+      clearChatBody();
+      appendMessage(num.toString(), true);
+      setTimeout(() => {
+        total = adults * 80 + children * 50;
+        appendMessage(`Total: ${adults} Adults (₹${adults * 80}), ${children} Children (₹${children * 50}) = ₹${total}. Confirm?`);
+        addOption('Confirm Booking', () => confirmBooking(total));
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function confirmBooking(totalAmount) {
+      // Check if user is logged in
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+        appendMessage('Please sign in to complete your booking.');
+        return;
+      }
+
+      // Generate user_id if not present
+      const user_id = user.user_id || 'USR' + Date.now() + user.phone.slice(-4);
+
+      // Generate transaction ID and date
+      const bill_date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const transaction_id = 'TKT' + Date.now();
+
+      // Prepare request data
+      const requestData = {
+        username: user.username,
+        user_id: user_id,  // Use generated user_id
+        email: user.email,
+        phone: user.phone,
+        number_of_adults: adults,
+        number_of_children: children,
+        total_bill_amount: totalAmount,
+        bill_date_time: bill_date_time,
+        transaction_id: transaction_id
+      };
+
+      console.log('Booking request data:', requestData);
+
+      showQRCode(totalAmount, () => {
+        fetch('http://localhost:3000/api/book-tickets', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(err => {
+              throw new Error(err.message || `HTTP error! status: ${response.status}`);
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            appendMessage(`Booking confirmed! Transaction ID: ${transaction_id}`);
+            saveChatHistory('Ticket booking successful');
+            // Clear the booking data
+            adults = 0;
+            children = 0;
+            total = 0;
+          } else {
+            appendMessage('Booking failed: ' + data.message);
+            console.error('Booking error:', data);
+          }
+        })
+        .catch(error => {
+          console.error('Booking error:', error);
+          appendMessage('Booking failed. Please try again.');
+        });
+      });
+    }
+
+    // Replace the existing bookFood() function with this corrected version:
+
+function bookFood() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) {
+    appendMessage('Please sign in to place your order.');
+    return;
+  }
+
+  const order_id = 'FOOD' + Date.now();
+  const transaction_number = 'FOODTXN' + Math.floor(Math.random() * 1000000000);
+  
+  // Format food items as JSON array for the database
+  const food_items = cart.map(item => ({
+    item: item.item,
+    price: item.price,
+    restaurant: item.restaurant
+  }));
+  
+  const total_amount = foodTotal;
+
+  showQRCode(total_amount, () => {
+    // Send order to backend with correct structure
+    fetch('http://localhost:3005/api/foodie-info', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order_id,
+        username: user.username,
+        email: user.email,
+        food_items,
+        total_amount,
+        transaction_number
+      })
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => {
+          throw new Error(err.message || `HTTP error! status: ${res.status}`);
+        });
+      }
+      return res.json();
+    })
+    .then(response => {
+      if (response.success) {
+        appendMessage(`Order placed successfully!<br>Order ID: <b>${order_id}</b><br>Transaction Number: <b>${transaction_number}</b>`);
+        
+        // Add to order history for local tracking
+        orderHistory.push({
+          date: new Date().toLocaleDateString(),
+          total: total_amount,
+          items: cart.map(item => item.item).join(', '),
+          orderId: order_id,
+          transactionNumber: transaction_number
+        });
+        
+        // Clear cart after successful order
+        cart = [];
+        foodTotal = 0;
+        
+        // Save chat history
+        saveChatHistory('Food order successful');
+        
+      } else {
+        appendMessage('Order failed: ' + (response.message || 'Unknown error'));
+      }
+    })
+    .catch(err => {
+      appendMessage('Order failed. Please try again.');
+      console.error('Order error:', err);
+    });
+  });
+}
+
+    function handleInput(value) {
+      if (!value.trim()) return;
+      saveState();
+      clearChatBody();
+      appendMessage(value, true);
+      setTimeout(() => {
+        const lastBotMessage = previousStates[previousStates.length - 1]?.messages.find(m => !m.isUser)?.content || '';
+        const input = value.toLowerCase().trim();
+
+        if (lastBotMessage.includes('leave your review')) {
+          appendMessage(`Thank you for your review: "${value}"! We appreciate your feedback.`);
+        } else if (lastBotMessage.includes('Contact Us')) {
+          appendMessage(`Your question: "${value}" has been sent. We’ll get back to you soon!`);
+        } else if (lastBotMessage.includes('How many adults')) {
+          const num = parseInt(value);
+          if (isNaN(num) || num < 1 || num > 5) appendMessage('Please enter a number between 1 and 5 for adults.');
+          else selectAdults(num);
+        } else if (lastBotMessage.includes('How many children')) {
+          const num = parseInt(value);
+          if (isNaN(num) || num < 0 || num > 4) appendMessage('Please enter a number between 0 and 4 for children.');
+          else selectChildren(num);
+        } else if (lastBotMessage.includes('card details') && lastBotMessage.includes('food order')) {
+          const cardRegex = /^\d{4}-\d{4}-\d{4}-\d{4}\s\d{2}\/\d{2}\s\d{3}$/;
+          if (!cardRegex.test(value)) appendMessage('Please provide valid card details (e.g., 1234-5678-9012-3456 MM/YY 123).');
+          else completeFoodPayment(foodTotal, 'Credit/Debit Card');
+        } else if (lastBotMessage.includes('UPI ID') && lastBotMessage.includes('food order') && !lastBotMessage.includes('select an option')) {
+          const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+          if (!upiRegex.test(value)) appendMessage('Please enter a valid UPI ID (e.g., yourname@upi).');
+          else completeFoodPayment(foodTotal, `UPI (${value})`);
+        } else if (lastBotMessage.includes('bank name') && lastBotMessage.includes('food order')) {
+          if (value.trim().length === 0) appendMessage('Please enter a valid bank name.');
+          else completeFoodPayment(foodTotal, `${value} Net Banking`);
+        } else if (lastBotMessage.includes('card details')) {
+          const cardRegex = /^\d{4}-\d{4}-\d{4}-\d{4}\s\d{2}\/\d{2}\s\d{3}$/;
+          if (!cardRegex.test(value)) appendMessage('Please provide valid card details (e.g., 1234-5678-9012-3456 MM/YY 123).');
+          else completePayment(total, 'Credit/Debit Card');
+        } else if (lastBotMessage.includes('UPI ID') && !lastBotMessage.includes('select an option')) {
+          const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+          if (!upiRegex.test(value)) appendMessage('Please enter a valid UPI ID (e.g., yourname@upi).');
+          else completePayment(total, `UPI (${value})`);
+        } else if (lastBotMessage.includes('bank name')) {
+          if (value.trim().length === 0) appendMessage('Please enter a valid bank name.');
+          else completePayment(total, `${value} Net Banking`);
+        } else {
+          const matchedKey = Object.keys(responses).find(key => input.includes(key));
+          if (matchedKey) {
+            appendMessage(responses[matchedKey].message);
+            responses[matchedKey].options.forEach(opt => addOption(opt.text, opt.callback));
+          } else {
+            appendMessage(`Hmm, I’m not sure about "${value}". Try asking about tickets, food, hours, or events—or pick an option:`);
+            addOption('Book Tickets', () => showResponse('option1'));
+            addOption('Holidays and FAQs', () => showResponse('option2'));
+            addOption('Food Courts & Bus Services', () => showResponse('option3'));
+            addOption('Contact Us', () => showResponse('option4'));
+            addOption('Leave a Review', () => showResponse('option5'));
+          }
+        }
+        showBackButton(true);
+        scrollToBottom();
+      }, 500);
+    }
+
+    function showBackButton(show) {
+      document.getElementById('backBtn').style.display = show && previousStates.length > 0 ? 'inline-block' : 'none';
+    }
+
+    function goBack() {
+      if (previousStates.length > 0) {
+        const lastState = previousStates.pop();
+        restoreState(lastState);
+        showBackButton(previousStates.length > 0);
+      }
+    }
+
+    function resetChat() {
+      previousStates = [];
+      cart = [];
+      foodTotal = 0;
+      clearChatBody();
+      const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+      appendMessage(`${randomFact}<br><br>Hello! How can I assist you today?`);
+      addOption('Book Tickets', () => showResponse('option1'));
+      addOption('Holidays and FAQs', () => showResponse('option2'));
+      addOption('Food Courts & Bus Services', () => showResponse('option3'));
+      addOption('Contact Us', () => showResponse('option4'));
+      addOption('Leave a Review', () => showResponse('option5'));
+      addOption('Order History', () => showResponse('orderHistory'));
+      showBackButton(false);
+    }
+
+    setDynamicWelcome();
+    showSlides();
+  </script>
+  <script>
+    // Update login/signout link based on login state
+    function updateLoginLink() {
+      const loginLink = document.getElementById('login-link');
+      if (localStorage.getItem('museum_logged_in') === 'true') {
+        loginLink.textContent = 'Sign Out';
+        loginLink.onclick = function(e) {
+          e.preventDefault();
+          localStorage.removeItem('museum_logged_in');
+          updateLoginLink();
+          alert('You have been signed out.');
+        };
+      } else {
+        loginLink.textContent = 'Sign In';
+        loginLink.onclick = function(e) {
+          e.preventDefault();
+          window.location.href = 'signin.html';
+        };
+      }
+    }
+    updateLoginLink();
+  </script>
+  <script>
+    // Example function to call after payment is done
+    function sendPaymentConfirmation(email, username, amount, orderDetails, transactionId) {
+      console.log('sendPaymentConfirmation called', email, username, amount, orderDetails, transactionId);
+      fetch('http://localhost:3000/api/payment-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          username,
+          amount,
+          orderDetails,    // Array of order items or a string
+          transactionId    // Unique transaction id (generate on frontend or backend)
+        })
+      })
+      .then(res => res.json())
+      .then(response => {
+        if (response.success) {
+          alert('Payment confirmation email sent!');
+        } else {
+          alert('Failed to send email. ' + (response.message || ''));
+          if (response.error) console.error('Email error:', response.error);
+        }
+      })
+      .catch((err) => {
+        alert('Failed to send email. Please try again.');
+        console.error('Fetch error:', err);
+      });
+    }
+
+    
+  </script>
+  <script>
+    // Add this after your existing functions
+function saveChatHistory(messageContent, isUser = false) {
+  const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  history.push({
+    content: messageContent,
+    isUser: isUser,
+    timestamp: new Date().toISOString(),
+    type: 'ticket_booking'
+  });
+  localStorage.setItem('chatHistory', JSON.stringify(history));
+}
+
+function viewChatHistory() {
+  const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  clearChatBody();
+  appendMessage('Chat History:', false);
+  
+  if (history.length === 0) {
+    appendMessage('No booking history found.');
+  } else {
+    history.forEach(item => {
+      if (item.type === 'ticket_booking') {
+        appendMessage(item.content, item.isUser);
+      }
+    });
+  }
+  
+  showBackButton(true);
+  scrollToBottom();
+}
+  </script>
+
+</body>
+</html>
